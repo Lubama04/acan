@@ -103,11 +103,21 @@ function iconB({ bg = C.navy, mark = C.white, signal = C.gold, accent = C.blue }
 }
 
 // --- Wordmark -----------------------------------------------------------------------------------------
-function wordmark(x, y, { primary = C.navy, secondary = C.blue, tagline = "#8A5F0F", size = 40 } = {}) {
-  const w1 = textPath(F800, "Africa", x, y, size, -0.4);
-  const w2 = textPath(F600, "Média", x + w1.width + size * 0.22, y, size, -0.2);
-  const tag = textPath(F600, "AGENCE DE COMMUNICATION", x + 1, y + size * 0.62, size * 0.27, size * 0.06);
-  const width = Math.max(w1.width + size * 0.22 + w2.width, tag.width);
+function wordmark(
+  x,
+  y,
+  { primary = C.navy, secondary = C.blue, tagline = "#8A5F0F", size = 40, center = false } = {},
+) {
+  const nameW =
+    textPath(F800, "Africa", 0, 0, size, -0.4).width + size * 0.22 + textPath(F600, "Média", 0, 0, size, -0.2).width;
+  const tagArgs = ["AGENCE DE COMMUNICATION", size * 0.27, size * 0.06];
+  const tagW = textPath(F600, tagArgs[0], 0, 0, tagArgs[1], tagArgs[2]).width;
+  const width = Math.max(nameW, tagW);
+  const nx = center ? x + (width - nameW) / 2 : x;
+  const tx = center ? x + (width - tagW) / 2 : x + 1;
+  const w1 = textPath(F800, "Africa", nx, y, size, -0.4);
+  const w2 = textPath(F600, "Média", nx + w1.width + size * 0.22, y, size, -0.2);
+  const tag = textPath(F600, tagArgs[0], tx, y + size * 0.62, tagArgs[1], tagArgs[2]);
   return {
     svg: `<path d="${w1.d}" fill="${primary}"/><path d="${w2.d}" fill="${secondary}"/><path d="${tag.d}" fill="${tagline}"/>`,
     width,
@@ -125,9 +135,9 @@ function horizontal(icon, colors, scale = 1.25) {
 }
 
 function vertical(icon, colors) {
-  const wmProbe = wordmark(0, 0, colors);
+  const wmProbe = wordmark(0, 0, { ...colors, center: true });
   const w = Math.ceil(Math.max(wmProbe.width, 96) + 8);
-  const wm = wordmark((w - wmProbe.width) / 2, 148, colors);
+  const wm = wordmark((w - wmProbe.width) / 2, 140, { ...colors, center: true });
   return svgDoc(w, 172, `<g transform="translate(${(w - 96) / 2} 0) scale(1.5)">${icon}</g>${wm.svg}`, "Africa Média, agence de communication");
 }
 
@@ -231,15 +241,13 @@ async function main() {
   );
 
   // OG image 1200×630: navy background, white logo, one factual line.
-  const wm = wordmark(0, 0, white, 76);
-  const line = textPath(F600, "Communication institutionnelle, contenus et relations presse au Tchad", 0, 0, 30);
+  const line = textPath(F600, "Communication institutionnelle, contenus et relations presse au Tchad", 0, 0, 29);
   const ogBody =
     `<rect width="1200" height="630" fill="${C.navy}"/>` +
     `<rect x="0" y="606" width="1200" height="24" fill="${C.gold}"/>` +
-    `<g transform="translate(96 150) scale(2.6)">${iconA({ bubble: C.white, signal: "#E9C46A", knockout: true })}</g>` +
-    `<g transform="translate(96 440)">${wordmark(0, 0, white, 76).svg}</g>` +
-    `<g transform="translate(98 540)"><path d="${line.d}" fill="#C9D6EA"/></g>`;
-  void wm;
+    `<g transform="translate(96 96) scale(2.4)">${iconA({ bubble: C.white, signal: "#E9C46A", knockout: true })}</g>` +
+    `<g transform="translate(96 390)">${wordmark(0, 0, { ...white, size: 96 }).svg}</g>` +
+    `<g transform="translate(98 530)"><path d="${line.d}" fill="#C9D6EA"/></g>`;
   const og = svgDoc(1200, 630, ogBody, "Africa Média");
   write("design/og-image.svg", og);
   write("src/app/opengraph-image.png", await sharp(Buffer.from(og)).png().toBuffer());
