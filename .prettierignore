@@ -1,0 +1,4 @@
+node_modules
+.next
+supabase/config.toml
+package-lock.json
