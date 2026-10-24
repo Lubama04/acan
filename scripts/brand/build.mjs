@@ -194,6 +194,7 @@ async function main() {
 
   // Site assets
   write("public/brand/logo-horizontal.svg", horizontal(iconA(), brand));
+  write("public/brand/mark.svg", svgDoc(64, 64, iconA(), "Africa Média"));
   write("public/brand/logo-white.svg", horizontal(iconA({ bubble: C.white, signal: "#E9C46A", knockout: true }), white));
   // Small sizes: arcs blur below 32 px, so the favicon keeps only the enlarged bubble and Africa.
   const faviconSvg = svgDoc(

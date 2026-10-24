@@ -1,7 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
-import { createClient as createAdminSupabaseClient } from "@supabase/supabase-js";
 import { getPublicEnv } from "@/lib/env";
 
 /** Supabase client bound to the visitor's session (RLS applies). */
@@ -24,14 +23,5 @@ export async function createClient() {
         }
       },
     },
-  });
-}
-
-/** Privileged client (bypasses RLS). Server-only; use sparingly and never with user-supplied filters unchecked. */
-export function createAdminClient() {
-  const secret = process.env.SUPABASE_SECRET_KEY;
-  if (!secret) throw new Error("SUPABASE_SECRET_KEY is not set");
-  return createAdminSupabaseClient(getPublicEnv().NEXT_PUBLIC_SUPABASE_URL, secret, {
-    auth: { persistSession: false, autoRefreshToken: false },
   });
 }
