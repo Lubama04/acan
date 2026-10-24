@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "lighthouse": "node scripts/lighthouse.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -44,6 +45,7 @@
     "eslint": "^9",
     "eslint-config-next": "^16.4.3",
     "jsdom": "^29.1.1",
+    "lighthouse": "^13.5.0",
     "opentype.js": "^1.3.4",
     "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
