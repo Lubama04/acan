@@ -14,7 +14,13 @@ async function sessionHash() {
   let sid = jar.get(SESSION_COOKIE)?.value;
   if (!sid || !/^[0-9a-f-]{36}$/.test(sid)) {
     sid = randomUUID();
-    jar.set(SESSION_COOKIE, sid, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 1800, path: "/api/ads" });
+    jar.set(SESSION_COOKIE, sid, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: true,
+      maxAge: 1800,
+      path: "/api/ads",
+    });
   }
   return hashValue(`sid:${sid}`);
 }

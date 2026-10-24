@@ -36,62 +36,77 @@ export default async function AdvertisingPage() {
             <table className="w-full min-w-[480px] text-left">
               <caption className="sr-only">Emplacements publicitaires</caption>
               <thead>
-                <tr className="border-b-2 border-navy text-sm">
-                  <th scope="col" className="py-2 pe-4">Emplacement</th>
-                  <th scope="col" className="py-2 pe-4">Format (pixels)</th>
-                  <th scope="col" className="py-2">Où</th>
+                <tr className="border-navy border-b-2 text-sm">
+                  <th scope="col" className="py-2 pe-4">
+                    Emplacement
+                  </th>
+                  <th scope="col" className="py-2 pe-4">
+                    Format (pixels)
+                  </th>
+                  <th scope="col" className="py-2">
+                    Où
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {slots
                   .filter((s) => s.enabled)
                   .map((s) => (
-                    <tr key={s.key} className="border-b border-border align-top">
-                      <th scope="row" className="py-3 pe-4 font-semibold">{s.label}</th>
+                    <tr key={s.key} className="border-border border-b align-top">
+                      <th scope="row" className="py-3 pe-4 font-semibold">
+                        {s.label}
+                      </th>
                       <td className="py-3 pe-4">
                         {s.width} × {s.height}
                         {(s.key === "header" || s.key === "footer") && (
-                          <span className="block text-sm text-slate">320 × 100 sur mobile</span>
+                          <span className="text-slate block text-sm">320 × 100 sur mobile</span>
                         )}
                       </td>
-                      <td className="py-3 text-slate">{PLACEMENT_HELP[s.key]}</td>
+                      <td className="text-slate py-3">{PLACEMENT_HELP[s.key]}</td>
                     </tr>
                   ))}
               </tbody>
             </table>
           </div>
 
-          <h2 className="h2 mt-12 text-navy">Contenus sponsorisés</h2>
+          <h2 className="h2 text-navy mt-12">Contenus sponsorisés</h2>
           <p className="mt-3">
-            Un partenaire peut financer un article utile à nos lecteurs (guide pratique, retour d&apos;expérience). L&apos;article
-            porte la mention « Contenu sponsorisé » et le nom du partenaire, en haut et en bas de page. Nous gardons la
-            décision finale sur le texte publié.{" "}
+            Un partenaire peut financer un article utile à nos lecteurs (guide pratique, retour
+            d&apos;expérience). L&apos;article porte la mention « Contenu sponsorisé » et le nom du
+            partenaire, en haut et en bas de page. Nous gardons la décision finale sur le texte publié.{" "}
             <Link href="/contenus-sponsorises" className="link">
               Lire notre politique
             </Link>
             .
           </p>
 
-          <h2 className="h2 mt-12 text-navy">Ce que nous refusons</h2>
+          <h2 className="h2 text-navy mt-12">Ce que nous refusons</h2>
           <ul className="mt-3 list-disc space-y-1.5 ps-5">
             <li>La propagande politique partisane.</li>
-            <li>Les produits ou services illégaux au Tchad, les jeux d&apos;argent non autorisés, les produits de santé non homologués.</li>
+            <li>
+              Les produits ou services illégaux au Tchad, les jeux d&apos;argent non autorisés, les produits
+              de santé non homologués.
+            </li>
             <li>Les publicités trompeuses ou déguisées en information.</li>
-            <li>Les annonces sur les pages légales, les formulaires et l&apos;espace d&apos;administration.</li>
+            <li>
+              Les annonces sur les pages légales, les formulaires et l&apos;espace d&apos;administration.
+            </li>
           </ul>
         </div>
 
         <aside className="space-y-6">
-          <div className="rounded-lg bg-paper p-6">
+          <div className="bg-paper rounded-lg p-6">
             <h2 className="h3 text-navy">Tarifs</h2>
             <p className="mt-2">
-              Tarifs sur demande, selon l&apos;emplacement et la durée. Les statistiques d&apos;affichage et de clics sont
-              comptées côté serveur, avec filtrage des robots et des clics répétés.
+              Tarifs sur demande, selon l&apos;emplacement et la durée. Les statistiques d&apos;affichage et
+              de clics sont comptées côté serveur, avec filtrage des robots et des clics répétés.
             </p>
             {settings.feature_media_kit ? (
               <p className="mt-3 font-semibold">Le kit média est disponible sur demande.</p>
             ) : (
-              <p className="mt-3 text-sm text-slate">Le kit média (audience, formats, conditions) est en préparation.</p>
+              <p className="text-slate mt-3 text-sm">
+                Le kit média (audience, formats, conditions) est en préparation.
+              </p>
             )}
             <Link href="/contact?sujet=publicite" className="btn btn-primary mt-5">
               Demander les tarifs

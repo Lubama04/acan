@@ -38,7 +38,10 @@ describe("quoteSchema", () => {
   });
 
   it("rejects control characters and oversized messages", () => {
-    expect(quoteSchema.safeParse({ ...validQuote, message: "Bonjour\u0000 nous voulons un devis complet" }).success).toBe(false);
+    expect(
+      quoteSchema.safeParse({ ...validQuote, message: "Bonjour\u0000 nous voulons un devis complet" })
+        .success,
+    ).toBe(false);
     expect(quoteSchema.safeParse({ ...validQuote, message: "x".repeat(4001) }).success).toBe(false);
   });
 

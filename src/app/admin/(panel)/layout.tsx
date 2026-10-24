@@ -17,7 +17,7 @@ export default async function PanelLayout({ children }: LayoutProps<"/admin">) {
   const isAdmin = session.roles.includes("admin");
   return (
     <div className="min-h-full">
-      <header className="border-b border-border bg-white">
+      <header className="border-border border-b bg-white">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-3">
           <Link href="/admin" aria-label="Tableau de bord">
             <Logo className="h-8 w-auto" />
@@ -26,7 +26,10 @@ export default async function PanelLayout({ children }: LayoutProps<"/admin">) {
             <ul className="flex flex-wrap gap-1">
               {NAV.filter((n) => n.role === "editor" || isAdmin).map((n) => (
                 <li key={n.href}>
-                  <Link href={n.href} className="rounded-md px-3 py-2 text-sm font-semibold text-navy hover:bg-paper">
+                  <Link
+                    href={n.href}
+                    className="text-navy hover:bg-paper rounded-md px-3 py-2 text-sm font-semibold"
+                  >
                     {n.label}
                   </Link>
                 </li>

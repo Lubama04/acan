@@ -15,7 +15,9 @@ export default async function EditPostPage({ params, searchParams }: PageProps<"
   const supabase = await createClient();
   const { data: post } = await supabase
     .from("posts")
-    .select("id, slug, title, excerpt, body_md, category, cover_url, cover_alt, author_name, sponsored, sponsor_name, seo_title, seo_description, status")
+    .select(
+      "id, slug, title, excerpt, body_md, category, cover_url, cover_alt, author_name, sponsored, sponsor_name, seo_title, seo_description, status",
+    )
     .eq("id", id)
     .single();
   if (!post) notFound();
@@ -34,13 +36,16 @@ export default async function EditPostPage({ params, searchParams }: PageProps<"
         <PostForm post={post as EditablePost} saved={sp.saved === "1"} />
       </div>
       {session.roles.includes("admin") && (
-        <form action={deletePost} className="mt-8 flex flex-wrap items-end gap-2 rounded-lg border border-destructive bg-white p-4">
+        <form
+          action={deletePost}
+          className="border-destructive mt-8 flex flex-wrap items-end gap-2 rounded-lg border bg-white p-4"
+        >
           <input type="hidden" name="id" value={post.id} />
           <label className="text-sm">
             Supprimer définitivement cet article : tapez SUPPRIMER
             <input name="confirm" className="field mt-1 max-w-48" autoComplete="off" />
           </label>
-          <button type="submit" className="btn border border-destructive text-destructive">
+          <button type="submit" className="btn border-destructive text-destructive border">
             Supprimer
           </button>
         </form>

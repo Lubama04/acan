@@ -49,7 +49,7 @@ export default async function PostPage({ params }: PageProps<"/journal/[slug]">)
         <article>
           <header className="max-w-[68ch]">
             {post.sponsored && <SponsoredLabel sponsor={post.sponsor_name} />}
-            <h1 className="h1 mt-3 text-navy">{post.title}</h1>
+            <h1 className="h1 text-navy mt-3">{post.title}</h1>
             <div className="mt-3">
               <PostMeta post={post} />
             </div>
@@ -76,8 +76,9 @@ export default async function PostPage({ params }: PageProps<"/journal/[slug]">)
             )}
           </div>
           {post.sponsored && (
-            <p className="mt-10 max-w-[68ch] text-sm text-slate">
-              Cet article est un contenu sponsorisé{post.sponsor_name ? ` par ${post.sponsor_name}` : ""}. Voir notre{" "}
+            <p className="text-slate mt-10 max-w-[68ch] text-sm">
+              Cet article est un contenu sponsorisé{post.sponsor_name ? ` par ${post.sponsor_name}` : ""}.
+              Voir notre{" "}
               <Link href="/contenus-sponsorises" className="link">
                 politique des contenus sponsorisés
               </Link>

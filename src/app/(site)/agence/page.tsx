@@ -50,13 +50,15 @@ export default async function AgencyPage() {
           <SectionHeader id="mission-title" eyebrow="Mission" title="Rendre votre action compréhensible" />
           <div className="space-y-4 text-lg">
             <p>
-              Beaucoup d&apos;organisations font un travail utile que personne ne connaît : un projet de santé dans le Ouaddaï,
-              une PME qui recrute à N&apos;Djamena, un service public qui change ses horaires. L&apos;information existe, mais elle
-              n&apos;arrive pas aux bonnes personnes, ou pas sous la bonne forme.
+              Beaucoup d&apos;organisations font un travail utile que personne ne connaît : un projet de santé
+              dans le Ouaddaï, une PME qui recrute à N&apos;Djamena, un service public qui change ses
+              horaires. L&apos;information existe, mais elle n&apos;arrive pas aux bonnes personnes, ou pas
+              sous la bonne forme.
             </p>
             <p>
-              Notre métier est de transformer cette information en messages clairs, en images justes et en contenus que les
-              gens lisent vraiment, sur les canaux qu&apos;ils utilisent : radio, presse, Facebook, TikTok, WhatsApp.
+              Notre métier est de transformer cette information en messages clairs, en images justes et en
+              contenus que les gens lisent vraiment, sur les canaux qu&apos;ils utilisent : radio, presse,
+              Facebook, TikTok, WhatsApp.
             </p>
           </div>
         </div>
@@ -64,12 +66,16 @@ export default async function AgencyPage() {
 
       <section className="bg-paper py-16" aria-labelledby="valeurs-title">
         <div className="container-site">
-          <SectionHeader id="valeurs-title" eyebrow="Valeurs" title="Quatre règles que nous appliquons à chaque projet" />
+          <SectionHeader
+            id="valeurs-title"
+            eyebrow="Valeurs"
+            title="Quatre règles que nous appliquons à chaque projet"
+          />
           <dl className="mt-10 grid gap-8 md:grid-cols-2">
             {VALUES.map((v) => (
-              <div key={v.title} className="border-t-2 border-navy pt-4">
+              <div key={v.title} className="border-navy border-t-2 pt-4">
                 <dt className="h3 text-navy">{v.title}</dt>
-                <dd className="mt-2 text-slate-paper">{v.text}</dd>
+                <dd className="text-slate-paper mt-2">{v.text}</dd>
               </div>
             ))}
           </dl>
@@ -92,14 +98,14 @@ export default async function AgencyPage() {
                       className="h-40 w-32 rounded-md object-cover"
                     />
                   ) : (
-                    <div aria-hidden="true" className="hidden h-40 w-32 rounded-md bg-paper sm:block" />
+                    <div aria-hidden="true" className="bg-paper hidden h-40 w-32 rounded-md sm:block" />
                   )}
                   <div>
                     <h3 className="h3 text-navy">{m.full_name}</h3>
-                    <p className="font-semibold text-gold-ink">{m.role}</p>
-                    <p className="mt-2 text-slate">{m.bio}</p>
+                    <p className="text-gold-ink font-semibold">{m.role}</p>
+                    <p className="text-slate mt-2">{m.bio}</p>
                     {m.experience.length > 0 && (
-                      <ul className="mt-3 list-disc space-y-1 ps-5 text-sm text-slate">
+                      <ul className="text-slate mt-3 list-disc space-y-1 ps-5 text-sm">
                         {m.experience.map((e) => (
                           <li key={e}>{e}</li>
                         ))}
@@ -113,7 +119,7 @@ export default async function AgencyPage() {
         </section>
       )}
 
-      <section className="border-t border-border py-12" aria-labelledby="statut-title">
+      <section className="border-border border-t py-12" aria-labelledby="statut-title">
         <div className="container-site">
           <h2 id="statut-title" className="h3 text-navy">
             Statut de l&apos;entreprise

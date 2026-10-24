@@ -12,9 +12,9 @@ export default async function SettingsPage() {
   return (
     <>
       <h1 className="h1 text-navy">Paramètres du site</h1>
-      <p className="mt-2 max-w-3xl text-slate">
-        Ne saisissez que des informations officielles et vérifiées. Tant que le RCCM et le NIF sont vides, le site affiche
-        « en cours d&apos;immatriculation ».
+      <p className="text-slate mt-2 max-w-3xl">
+        Ne saisissez que des informations officielles et vérifiées. Tant que le RCCM et le NIF sont vides, le
+        site affiche « en cours d&apos;immatriculation ».
       </p>
       <div className="mt-6">
         <SettingsForm values={values} />

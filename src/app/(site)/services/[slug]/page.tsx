@@ -10,7 +10,11 @@ export async function generateMetadata({ params }: PageProps<"/services/[slug]">
   const { slug } = await params;
   const s = await getService(slug);
   if (!s) return {};
-  return pageMetadata({ title: `${s.title} à N'Djamena`, description: s.summary, path: `/services/${s.slug}` });
+  return pageMetadata({
+    title: `${s.title} à N'Djamena`,
+    description: s.summary,
+    path: `/services/${s.slug}`,
+  });
 }
 
 export default async function ServicePage({ params }: PageProps<"/services/[slug]">) {
@@ -39,33 +43,33 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
         <div>
           <p className="prose-am">{service.body_md}</p>
 
-          <h2 className="h2 mt-12 text-navy">Ce que vous recevez</h2>
+          <h2 className="h2 text-navy mt-12">Ce que vous recevez</h2>
           <ul className="mt-4 space-y-2">
             {service.deliverables.map((d) => (
               <li key={d} className="flex gap-3">
-                <span aria-hidden="true" className="mt-2.5 size-2 shrink-0 rounded-full bg-gold" />
+                <span aria-hidden="true" className="bg-gold mt-2.5 size-2 shrink-0 rounded-full" />
                 <span>{d}</span>
               </li>
             ))}
           </ul>
 
-          <h2 className="h2 mt-12 text-navy">Déroulement</h2>
+          <h2 className="h2 text-navy mt-12">Déroulement</h2>
           <ol className="mt-4 space-y-4">
             {service.process.map((p, i) => (
               <li key={p} className="grid grid-cols-[2.5rem_1fr] items-baseline">
-                <span className="font-heading text-lg font-extrabold text-gold-ink">{i + 1}.</span>
+                <span className="font-heading text-gold-ink text-lg font-extrabold">{i + 1}.</span>
                 <span>{p}</span>
               </li>
             ))}
           </ol>
 
-          <p className="mt-10 text-slate">
-            Prix : sur devis, selon le volume, les délais et les déplacements. Les déplacements hors de N&apos;Djamena sont
-            chiffrés à part.
+          <p className="text-slate mt-10">
+            Prix : sur devis, selon le volume, les délais et les déplacements. Les déplacements hors de
+            N&apos;Djamena sont chiffrés à part.
           </p>
         </div>
 
-        <aside aria-labelledby="autres-services" className="lg:border-s lg:border-border lg:ps-10">
+        <aside aria-labelledby="autres-services" className="lg:border-border lg:border-s lg:ps-10">
           <h2 id="autres-services" className="h3 text-navy">
             Autres services
           </h2>

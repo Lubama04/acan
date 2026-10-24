@@ -22,9 +22,11 @@ export default async function AdminAdsPage() {
   return (
     <>
       <h1 className="h1 text-navy">Publicité</h1>
-      <p className="mt-2 text-slate">
-        Priorité d&apos;affichage : sponsor direct actif, puis AdSense (si configuré et accepté par le visiteur), puis publicité
-        maison. AdSense : {adsenseConfigured ? "identifiant configuré" : "identifiant non configuré (variable d'environnement)"}.
+      <p className="text-slate mt-2">
+        Priorité d&apos;affichage : sponsor direct actif, puis AdSense (si configuré et accepté par le
+        visiteur), puis publicité maison. AdSense :{" "}
+        {adsenseConfigured ? "identifiant configuré" : "identifiant non configuré (variable d'environnement)"}
+        .
       </p>
 
       <section aria-labelledby="slots-title" className="mt-10">
@@ -33,19 +35,32 @@ export default async function AdminAdsPage() {
         </h2>
         <ul className="mt-4 grid gap-4 md:grid-cols-2">
           {(slots ?? []).map((s) => (
-            <li key={s.key} className="rounded-lg border border-border bg-white p-4">
+            <li key={s.key} className="border-border rounded-lg border bg-white p-4">
               <form action={updateAdSlot} className="space-y-3">
                 <input type="hidden" name="key" value={s.key} />
                 <p className="font-semibold">
-                  {s.label} <span className="text-slate">· {s.width}×{s.height}</span>
+                  {s.label}{" "}
+                  <span className="text-slate">
+                    · {s.width}×{s.height}
+                  </span>
                 </p>
                 <label className="flex items-center gap-3">
-                  <input type="checkbox" name="enabled" defaultChecked={s.enabled} className="size-5 accent-blue" />
+                  <input
+                    type="checkbox"
+                    name="enabled"
+                    defaultChecked={s.enabled}
+                    className="accent-blue size-5"
+                  />
                   Emplacement actif
                 </label>
                 <label className="block text-sm font-semibold">
                   Identifiant de bloc AdSense (facultatif)
-                  <input name="adsense_slot_id" defaultValue={s.adsense_slot_id ?? ""} inputMode="numeric" className="field mt-1" />
+                  <input
+                    name="adsense_slot_id"
+                    defaultValue={s.adsense_slot_id ?? ""}
+                    inputMode="numeric"
+                    className="field mt-1"
+                  />
                 </label>
                 <button type="submit" className="btn btn-secondary">
                   Enregistrer
@@ -62,30 +77,45 @@ export default async function AdminAdsPage() {
         </h2>
         <table className="mt-4 w-full border-collapse bg-white text-left text-sm">
           <thead>
-            <tr className="border-b-2 border-navy">
-              <th scope="col" className="p-3">Annonceur</th>
-              <th scope="col" className="p-3">Emplacement</th>
-              <th scope="col" className="p-3">Période</th>
-              <th scope="col" className="p-3">Affichages / clics (filtrés)</th>
-              <th scope="col" className="p-3">État</th>
+            <tr className="border-navy border-b-2">
+              <th scope="col" className="p-3">
+                Annonceur
+              </th>
+              <th scope="col" className="p-3">
+                Emplacement
+              </th>
+              <th scope="col" className="p-3">
+                Période
+              </th>
+              <th scope="col" className="p-3">
+                Affichages / clics (filtrés)
+              </th>
+              <th scope="col" className="p-3">
+                État
+              </th>
             </tr>
           </thead>
           <tbody>
             {(campaigns ?? []).map((c) => {
               const st = statFor(c.id);
               return (
-                <tr key={c.id} className="border-b border-border align-top">
+                <tr key={c.id} className="border-border border-b align-top">
                   <td className="p-3">
                     <span className="font-semibold">{c.advertiser}</span>
-                    <span className="block text-xs text-slate">{c.disclosure}</span>
+                    <span className="text-slate block text-xs">{c.disclosure}</span>
                   </td>
                   <td className="p-3">{c.slot_key}</td>
                   <td className="p-3">
-                    {new Date(c.starts_at).toLocaleDateString("fr-FR")} → {new Date(c.ends_at).toLocaleDateString("fr-FR")}
+                    {new Date(c.starts_at).toLocaleDateString("fr-FR")} →{" "}
+                    {new Date(c.ends_at).toLocaleDateString("fr-FR")}
                   </td>
                   <td className="p-3">
                     {st?.impressions ?? 0} / {st?.clicks ?? 0}
-                    {(st?.flagged_events ?? 0) > 0 && <span className="block text-xs text-slate">{st?.flagged_events} écartés (robots, répétitions)</span>}
+                    {(st?.flagged_events ?? 0) > 0 && (
+                      <span className="text-slate block text-xs">
+                        {st?.flagged_events} écartés (robots, répétitions)
+                      </span>
+                    )}
                   </td>
                   <td className="p-3">
                     <form action={toggleCampaign}>
@@ -103,8 +133,8 @@ export default async function AdminAdsPage() {
         </table>
         {!process.env.SUPABASE_SECRET_KEY && (
           <p className="notice mt-4 text-sm">
-            Le comptage des affichages et des clics nécessite la variable SUPABASE_SECRET_KEY côté serveur. Tant qu&apos;elle
-            est absente, les campagnes s&apos;affichent mais ne sont pas comptées.
+            Le comptage des affichages et des clics nécessite la variable SUPABASE_SECRET_KEY côté serveur.
+            Tant qu&apos;elle est absente, les campagnes s&apos;affichent mais ne sont pas comptées.
           </p>
         )}
         <div className="mt-8 max-w-3xl">

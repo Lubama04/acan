@@ -1,7 +1,16 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
 import { createPublicClient } from "@/lib/supabase/public";
-import type { AdCampaign, AdSlotKey, CaseStudy, Package, Post, Segment, Service, TeamMember } from "@/lib/types";
+import type {
+  AdCampaign,
+  AdSlotKey,
+  CaseStudy,
+  Package,
+  Post,
+  Segment,
+  Service,
+  TeamMember,
+} from "@/lib/types";
 
 const REVALIDATE = 300;
 

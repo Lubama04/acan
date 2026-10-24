@@ -23,20 +23,30 @@ export default async function AdminPostsPage() {
       </div>
       <table className="mt-8 w-full border-collapse bg-white text-left text-sm">
         <thead>
-          <tr className="border-b-2 border-navy">
-            <th scope="col" className="p-3">Titre</th>
-            <th scope="col" className="p-3">Statut</th>
-            <th scope="col" className="p-3">Mis à jour</th>
+          <tr className="border-navy border-b-2">
+            <th scope="col" className="p-3">
+              Titre
+            </th>
+            <th scope="col" className="p-3">
+              Statut
+            </th>
+            <th scope="col" className="p-3">
+              Mis à jour
+            </th>
           </tr>
         </thead>
         <tbody>
           {(posts ?? []).map((p) => (
-            <tr key={p.id} className="border-b border-border">
+            <tr key={p.id} className="border-border border-b">
               <td className="p-3">
                 <Link href={`/admin/journal/${p.id}`} className="link font-semibold">
                   {p.title}
                 </Link>
-                {p.sponsored && <span className="ms-2 rounded bg-[#fffaf0] px-2 py-0.5 text-xs font-semibold">Sponsorisé</span>}
+                {p.sponsored && (
+                  <span className="ms-2 rounded bg-[#fffaf0] px-2 py-0.5 text-xs font-semibold">
+                    Sponsorisé
+                  </span>
+                )}
               </td>
               <td className="p-3">{p.status === "published" ? "Publié" : "Brouillon"}</td>
               <td className="p-3">{new Date(p.updated_at).toLocaleDateString("fr-FR")}</td>
@@ -44,7 +54,7 @@ export default async function AdminPostsPage() {
           ))}
         </tbody>
       </table>
-      {(posts ?? []).length === 0 && <p className="mt-6 text-slate">Aucun article pour le moment.</p>}
+      {(posts ?? []).length === 0 && <p className="text-slate mt-6">Aucun article pour le moment.</p>}
     </>
   );
 }

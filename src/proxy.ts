@@ -3,7 +3,8 @@ import { createServerClient } from "@supabase/ssr";
 import { buildCsp, SECURITY_HEADERS } from "@/lib/security/csp";
 
 // Probes for files/CMSs that do not exist here: answer 404 early without rendering.
-const BLOCKED_PATHS = /^\/(?:\.env|\.git|wp-admin|wp-login\.php|xmlrpc\.php|phpmyadmin|server-status|\.DS_Store)/i;
+const BLOCKED_PATHS =
+  /^\/(?:\.env|\.git|wp-admin|wp-login\.php|xmlrpc\.php|phpmyadmin|server-status|\.DS_Store)/i;
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -55,7 +56,8 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     {
-      source: "/((?!_next/static|_next/image|favicon.ico|favicon.svg|icon.svg|apple-touch-icon.png|icon-|brand/|site.webmanifest).*)",
+      source:
+        "/((?!_next/static|_next/image|favicon.ico|favicon.svg|icon.svg|apple-touch-icon.png|icon-|brand/|site.webmanifest).*)",
       missing: [
         { type: "header", key: "next-router-prefetch" },
         { type: "header", key: "purpose", value: "prefetch" },

@@ -41,9 +41,12 @@ export default async function DashboardPage() {
       <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {tiles.map((t) => (
           <li key={t.label}>
-            <Link href={t.href} className="block rounded-lg border border-border bg-white p-5 no-underline hover:border-navy">
-              <p className="font-heading text-4xl font-extrabold text-navy">{t.value}</p>
-              <p className="mt-1 text-slate">{t.label}</p>
+            <Link
+              href={t.href}
+              className="border-border hover:border-navy block rounded-lg border bg-white p-5 no-underline"
+            >
+              <p className="font-heading text-navy text-4xl font-extrabold">{t.value}</p>
+              <p className="text-slate mt-1">{t.label}</p>
             </Link>
           </li>
         ))}

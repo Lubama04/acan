@@ -1,14 +1,24 @@
 "use client";
 
-import { useActionState } from "react";
+import { startTransition, useActionState } from "react";
+import { keepValuesOnSubmit } from "@/components/forms/form-bits";
 import { createCampaign, type ActionResult } from "../actions";
 
 export function CampaignForm() {
-  const [state, action, pending] = useActionState<ActionResult, FormData>(createCampaign, { ok: false, message: "" });
+  const [state, action, pending] = useActionState<ActionResult, FormData>(createCampaign, {
+    ok: false,
+    message: "",
+  });
   return (
-    <form action={action} className="mt-4 grid gap-4 rounded-lg border border-border bg-white p-5 md:grid-cols-2">
+    <form
+      onSubmit={keepValuesOnSubmit(action, startTransition)}
+      className="border-border mt-4 grid gap-4 rounded-lg border bg-white p-5 md:grid-cols-2"
+    >
       {state.message && (
-        <p role={state.ok ? "status" : "alert"} className={`md:col-span-2 ${state.ok ? "font-semibold text-[#14532D]" : "field-error"}`}>
+        <p
+          role={state.ok ? "status" : "alert"}
+          className={`md:col-span-2 ${state.ok ? "font-semibold text-[#14532D]" : "field-error"}`}
+        >
           {state.message}
         </p>
       )}
@@ -56,7 +66,11 @@ export function CampaignForm() {
         Fin
         <input name="ends_at" type="datetime-local" required className="field mt-1" />
       </label>
-      <button type="submit" className="btn btn-primary md:col-span-2 md:justify-self-start" disabled={pending}>
+      <button
+        type="submit"
+        className="btn btn-primary md:col-span-2 md:justify-self-start"
+        disabled={pending}
+      >
         {pending ? "Création…" : "Créer (inactive)"}
       </button>
     </form>

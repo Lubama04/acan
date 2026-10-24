@@ -14,7 +14,11 @@ export function LegalPage({
 }) {
   return (
     <>
-      <PageHero title={title} crumbs={[{ name: title, path }]} lede={<span className="text-base">Dernière mise à jour : {updated}</span>} />
+      <PageHero
+        title={title}
+        crumbs={[{ name: title, path }]}
+        lede={<span className="text-base">Dernière mise à jour : {updated}</span>}
+      />
       <div className="container-site py-12">
         <div className="prose-am">{children}</div>
       </div>

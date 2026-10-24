@@ -24,21 +24,28 @@ export default async function ServicesPage() {
       <div className="container-site py-16">
         <ol className="space-y-14">
           {services.map((s, i) => (
-            <li key={s.slug} className="grid gap-6 border-b border-border pb-14 last:border-0 lg:grid-cols-[1fr_1.4fr]">
+            <li
+              key={s.slug}
+              className="border-border grid gap-6 border-b pb-14 last:border-0 lg:grid-cols-[1fr_1.4fr]"
+            >
               <div>
-                <p className="font-heading text-3xl font-extrabold text-gold-ink">{String(i + 1).padStart(2, "0")}</p>
-                <h2 className="h2 mt-1 text-navy">{s.title}</h2>
+                <p className="font-heading text-gold-ink text-3xl font-extrabold">
+                  {String(i + 1).padStart(2, "0")}
+                </p>
+                <h2 className="h2 text-navy mt-1">{s.title}</h2>
                 <p className="lede mt-3">{s.summary}</p>
                 <Link href={`/services/${s.slug}`} className="btn btn-secondary mt-6">
                   En savoir plus<span className="sr-only"> sur {s.title}</span>
                 </Link>
               </div>
               <div>
-                <h3 className="font-heading text-sm font-bold tracking-wide text-slate uppercase">Ce que vous recevez</h3>
+                <h3 className="font-heading text-slate text-sm font-bold tracking-wide uppercase">
+                  Ce que vous recevez
+                </h3>
                 <ul className="mt-3 space-y-2">
                   {s.deliverables.map((d) => (
                     <li key={d} className="flex gap-3">
-                      <span aria-hidden="true" className="mt-2.5 size-2 shrink-0 rounded-full bg-gold" />
+                      <span aria-hidden="true" className="bg-gold mt-2.5 size-2 shrink-0 rounded-full" />
                       <span>{d}</span>
                     </li>
                   ))}

@@ -6,7 +6,9 @@ import { SITE_URL } from "@/lib/site";
 export async function GET() {
   const s = await getSettings();
   const expires = new Date(Date.now() + 180 * 86_400_000).toISOString();
-  const contact = s.security_contact_email ? `mailto:${s.security_contact_email}` : `${SITE_URL}/contact?sujet=autre`;
+  const contact = s.security_contact_email
+    ? `mailto:${s.security_contact_email}`
+    : `${SITE_URL}/contact?sujet=autre`;
   const body = [
     `Contact: ${contact}`,
     `Expires: ${expires}`,
@@ -15,5 +17,7 @@ export async function GET() {
     `Policy: ${SITE_URL}/cgu`,
     "",
   ].join("\n");
-  return new Response(body, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=86400" } });
+  return new Response(body, {
+    headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=86400" },
+  });
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import type React from "react";
 
 /** Honeypot (invisible to humans, announced as "leave empty" to screen readers) + start timestamp. */
 export function AntiSpamFields() {
@@ -44,7 +45,7 @@ export function Field({
             *
           </span>
         ) : (
-          <span className="font-normal text-slate"> (facultatif)</span>
+          <span className="text-slate font-normal"> (facultatif)</span>
         )}
       </label>
       {children}
@@ -72,9 +73,24 @@ export function FormStatus({ state }: { state: { status: string; message?: strin
   return (
     <div
       role={ok ? "status" : "alert"}
-      className={`rounded-md border p-4 font-semibold ${ok ? "border-[#1F7A4D] bg-[#EEF7F1] text-[#14532D]" : "border-destructive bg-[#FEF3F2] text-destructive"}`}
+      className={`rounded-md border p-4 font-semibold ${ok ? "border-[#1F7A4D] bg-[#EEF7F1] text-[#14532D]" : "border-destructive text-destructive bg-[#FEF3F2]"}`}
     >
       {state.message}
     </div>
   );
+}
+
+/**
+ * React 19 resets uncontrolled form fields after every form action, which would wipe what the
+ * visitor typed when the server returns a validation error. Submitting through onSubmit keeps it.
+ */
+export function keepValuesOnSubmit(
+  dispatch: (fd: FormData) => void,
+  startTransition: (cb: () => void) => void,
+) {
+  return (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    startTransition(() => dispatch(fd));
+  };
 }

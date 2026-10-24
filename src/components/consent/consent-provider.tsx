@@ -71,16 +71,16 @@ export function ConsentProvider({ children, adsAvailable }: { children: ReactNod
           role="dialog"
           aria-modal="false"
           aria-labelledby="consent-title"
-          className="fixed inset-x-0 bottom-0 z-50 border-t-4 border-gold bg-white shadow-[0_-4px_24px_rgb(4_35_77/0.15)]"
+          className="border-gold fixed inset-x-0 bottom-0 z-50 border-t-4 bg-white shadow-[0_-4px_24px_rgb(4_35_77/0.15)]"
         >
           <div className="container-site py-5">
             <h2 id="consent-title" className="h3">
               Cookies et publicité
             </h2>
-            <p className="mt-2 max-w-3xl text-slate">
-              Le site fonctionne sans cookie publicitaire. Si vous l&apos;acceptez, des annonces Google peuvent être
-              affichées sur certaines pages du Journal ; elles sont non personnalisées sauf choix contraire de votre
-              part. Vous pouvez changer d&apos;avis à tout moment depuis le pied de page.{" "}
+            <p className="text-slate mt-2 max-w-3xl">
+              Le site fonctionne sans cookie publicitaire. Si vous l&apos;acceptez, des annonces Google
+              peuvent être affichées sur certaines pages du Journal ; elles sont non personnalisées sauf choix
+              contraire de votre part. Vous pouvez changer d&apos;avis à tout moment depuis le pied de page.{" "}
               <Link href="/cookies" className="link">
                 En savoir plus
               </Link>
@@ -88,7 +88,7 @@ export function ConsentProvider({ children, adsAvailable }: { children: ReactNod
             <label className="mt-3 flex items-start gap-3">
               <input
                 type="checkbox"
-                className="mt-1 size-5 accent-blue"
+                className="accent-blue mt-1 size-5"
                 checked={personalized}
                 onChange={(e) => setPersonalized(e.target.checked)}
               />
@@ -98,7 +98,11 @@ export function ConsentProvider({ children, adsAvailable }: { children: ReactNod
               <button type="button" className="btn btn-secondary" onClick={() => save(NO_CONSENT)}>
                 Refuser la publicité
               </button>
-              <button type="button" className="btn btn-primary" onClick={() => save({ ads: true, personalized })}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => save({ ads: true, personalized })}
+              >
                 Accepter la publicité
               </button>
             </div>

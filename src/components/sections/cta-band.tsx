@@ -14,7 +14,7 @@ export function CtaBand({
           <h2 id="cta-title" className="h2">
             {title}
           </h2>
-          <p className="mt-3 text-lg text-mist">{text}</p>
+          <p className="text-mist mt-3 text-lg">{text}</p>
         </div>
         <div className="flex flex-wrap gap-3">
           <Link href="/devis" className="btn bg-gold-light text-navy hover:bg-white">

@@ -11,9 +11,9 @@ export default async function LoginPage() {
   return (
     <main className="mx-auto max-w-md px-4 py-16">
       <Logo className="h-10 w-auto" />
-      <h1 className="h2 mt-8 text-navy">Espace d&apos;administration</h1>
-      <p className="mt-2 text-slate">Accès réservé. La double authentification est obligatoire.</p>
-      <div className="mt-8 rounded-lg border border-border bg-white p-6">
+      <h1 className="h2 text-navy mt-8">Espace d&apos;administration</h1>
+      <p className="text-slate mt-2">Accès réservé. La double authentification est obligatoire.</p>
+      <div className="border-border mt-8 rounded-lg border bg-white p-6">
         <LoginForm />
       </div>
     </main>

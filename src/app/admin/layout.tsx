@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminRootLayout({ children }: LayoutProps<"/admin">) {
-  return <div className="min-h-full bg-paper">{children}</div>;
+  return <div className="bg-paper min-h-full">{children}</div>;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { startTransition, useActionState, useRef, useState } from "react";
 import Link from "next/link";
 import { submitQuote, type FormState } from "@/app/actions/forms";
 import {
@@ -10,7 +10,7 @@ import {
   SERVICE_OPTIONS,
   TIMELINE_OPTIONS,
 } from "@/lib/site";
-import { AntiSpamFields, describedBy, Field, FormStatus } from "./form-bits";
+import { AntiSpamFields, describedBy, Field, FormStatus, keepValuesOnSubmit } from "./form-bits";
 
 const STEPS = ["Votre organisation", "Votre besoin", "Cadre du projet", "Vos coordonnées"] as const;
 
@@ -38,14 +38,17 @@ export function QuoteForm({
   defaultService?: string;
 }) {
   const [step, setStep] = useState(0);
-  const [state, action, pending] = useActionState<FormState, FormData>(async (prev, fd) => {
-    const res = await submitQuote(prev, fd);
-    if (res.status === "error" && res.fields) {
-      const first = Math.min(...Object.keys(res.fields).map((k) => FIELD_STEP[k] ?? 3));
-      setStep(first);
-    }
-    return res;
-  }, { status: "idle" });
+  const [state, action, pending] = useActionState<FormState, FormData>(
+    async (prev, fd) => {
+      const res = await submitQuote(prev, fd);
+      if (res.status === "error" && res.fields) {
+        const first = Math.min(...Object.keys(res.fields).map((k) => FIELD_STEP[k] ?? 3));
+        setStep(first);
+      }
+      return res;
+    },
+    { status: "idle" },
+  );
   const [clientErrors, setClientErrors] = useState<Record<string, string>>({});
   const formRef = useRef<HTMLFormElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -53,7 +56,7 @@ export function QuoteForm({
 
   if (state.status === "success") {
     return (
-      <div className="rounded-lg border border-border p-6">
+      <div className="border-border rounded-lg border p-6">
         <FormStatus state={state} />
         <p className="mt-4">
           En attendant, vous pouvez consulter nos{" "}
@@ -95,9 +98,15 @@ export function QuoteForm({
   const panel = (i: number) => (i === step ? "" : "hidden");
 
   return (
-    <form ref={formRef} action={action} noValidate className="relative space-y-6" aria-describedby="quote-progress">
+    <form
+      ref={formRef}
+      onSubmit={keepValuesOnSubmit(action, startTransition)}
+      noValidate
+      className="relative space-y-6"
+      aria-describedby="quote-progress"
+    >
       <AntiSpamFields />
-      <p id="quote-progress" className="text-sm font-semibold text-slate">
+      <p id="quote-progress" className="text-slate text-sm font-semibold">
         Étape {step + 1} sur {STEPS.length}
       </p>
       <ol className="grid grid-cols-4 gap-2" aria-hidden="true">
@@ -134,7 +143,13 @@ export function QuoteForm({
           </select>
         </Field>
         <Field id="organization" label="Nom de l'organisation" error={errors.organization}>
-          <input id="organization" name="organization" className="field" maxLength={160} autoComplete="organization" />
+          <input
+            id="organization"
+            name="organization"
+            className="field"
+            maxLength={160}
+            autoComplete="organization"
+          />
         </Field>
       </fieldset>
 
@@ -143,17 +158,28 @@ export function QuoteForm({
         <legend className="sr-only">{STEPS[1]}</legend>
         <div>
           <p className="field-label" id="services-label">
-            Services souhaités <span className="text-destructive" aria-hidden="true">*</span>
+            Services souhaités{" "}
+            <span className="text-destructive" aria-hidden="true">
+              *
+            </span>
           </p>
-          <div role="group" aria-labelledby="services-label" aria-describedby={describedBy("services", errors.services)} className="grid gap-2 sm:grid-cols-2">
+          <div
+            role="group"
+            aria-labelledby="services-label"
+            aria-describedby={describedBy("services", errors.services)}
+            className="grid gap-2 sm:grid-cols-2"
+          >
             {SERVICE_OPTIONS.map((o) => (
-              <label key={o.value} className="flex min-h-11 items-center gap-3 rounded-md border border-border px-3 py-2">
+              <label
+                key={o.value}
+                className="border-border flex min-h-11 items-center gap-3 rounded-md border px-3 py-2"
+              >
                 <input
                   type="checkbox"
                   name="services"
                   value={o.value}
                   defaultChecked={o.value === defaultService}
-                  className="size-5 accent-blue"
+                  className="accent-blue size-5"
                 />
                 <span>{o.label}</span>
               </label>
@@ -199,8 +225,19 @@ export function QuoteForm({
       {/* Step 3 */}
       <fieldset className={`space-y-5 ${panel(2)}`}>
         <legend className="sr-only">{STEPS[2]}</legend>
-        <Field id="budget_range" label="Budget envisagé" error={errors.budget_range} hint="Une fourchette nous aide à proposer une solution réaliste.">
-          <select id="budget_range" name="budget_range" className="field" defaultValue="non-defini" aria-describedby="budget_range-hint">
+        <Field
+          id="budget_range"
+          label="Budget envisagé"
+          error={errors.budget_range}
+          hint="Une fourchette nous aide à proposer une solution réaliste."
+        >
+          <select
+            id="budget_range"
+            name="budget_range"
+            className="field"
+            defaultValue="non-defini"
+            aria-describedby="budget_range-hint"
+          >
             {BUDGET_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
@@ -255,7 +292,12 @@ export function QuoteForm({
             aria-describedby={describedBy("email", errors.email)}
           />
         </Field>
-        <Field id="phone" label="Téléphone ou WhatsApp" error={errors.phone} hint="Format international, par exemple +235 66 00 00 00.">
+        <Field
+          id="phone"
+          label="Téléphone ou WhatsApp"
+          error={errors.phone}
+          hint="Format international, par exemple +235 66 00 00 00."
+        >
           <input
             id="phone"
             name="phone"
@@ -273,13 +315,13 @@ export function QuoteForm({
             <input
               type="checkbox"
               name="consent"
-              className="mt-1 size-5 shrink-0 accent-blue"
+              className="accent-blue mt-1 size-5 shrink-0"
               aria-invalid={Boolean(errors.consent)}
               aria-describedby={describedBy("consent", errors.consent)}
             />
             <span>
-              J&apos;accepte qu&apos;Africa Média utilise ces informations pour répondre à ma demande. Elles sont conservées
-              24 mois au plus.{" "}
+              J&apos;accepte qu&apos;Africa Média utilise ces informations pour répondre à ma demande. Elles
+              sont conservées 24 mois au plus.{" "}
               <Link href="/confidentialite" className="link">
                 Politique de confidentialité
               </Link>
@@ -297,7 +339,7 @@ export function QuoteForm({
         </div>
       </fieldset>
 
-      <div className="flex flex-wrap justify-between gap-3 border-t border-border pt-6">
+      <div className="border-border flex flex-wrap justify-between gap-3 border-t pt-6">
         {step > 0 ? (
           <button type="button" className="btn btn-secondary" onClick={() => go(step - 1)}>
             Retour

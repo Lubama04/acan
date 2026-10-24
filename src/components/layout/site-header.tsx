@@ -10,7 +10,7 @@ export async function SiteHeader() {
   const nav = MAIN_NAV.filter((item) => !item.flag || settings[item.flag]);
 
   return (
-    <header className="border-b border-border bg-white">
+    <header className="border-border border-b bg-white">
       <div className="container-site flex h-16 items-center justify-between gap-4 md:h-20">
         <Link href="/" className="shrink-0" aria-label="Africa Média, accueil">
           <Logo className="h-9 w-auto md:h-11" />
@@ -22,7 +22,7 @@ export async function SiteHeader() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="rounded-md px-3 py-2 text-[0.95rem] font-semibold text-navy hover:bg-paper"
+                  className="text-navy hover:bg-paper rounded-md px-3 py-2 text-[0.95rem] font-semibold"
                 >
                   {item.label}
                 </Link>
@@ -37,27 +37,27 @@ export async function SiteHeader() {
           </Link>
           <details className="group relative lg:hidden">
             <summary
-              className="flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-md border border-border text-navy [&::-webkit-details-marker]:hidden"
+              className="border-border text-navy flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-md border [&::-webkit-details-marker]:hidden"
               aria-label="Ouvrir le menu"
             >
               <Menu aria-hidden="true" className="size-6" />
             </summary>
             <nav
               aria-label="Navigation mobile"
-              className="absolute end-0 top-14 z-50 w-72 rounded-lg border border-border bg-white p-2 shadow-lg"
+              className="border-border absolute end-0 top-14 z-50 w-72 rounded-lg border bg-white p-2 shadow-lg"
             >
               <ul>
                 {nav.map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className="block rounded-md px-3 py-3 font-semibold text-navy hover:bg-paper"
+                      className="text-navy hover:bg-paper block rounded-md px-3 py-3 font-semibold"
                     >
                       {item.label}
                     </Link>
                   </li>
                 ))}
-                <li className="mt-2 border-t border-border pt-2">
+                <li className="border-border mt-2 border-t pt-2">
                   <Link href="/devis" className="btn btn-primary w-full">
                     Demander un devis
                   </Link>

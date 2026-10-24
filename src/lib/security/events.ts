@@ -37,7 +37,10 @@ const ALERT_GROUPING_MINUTES = 15;
 export async function logSecurityEvent(event: SecurityEvent): Promise<void> {
   const db = getServiceClient();
   if (!db) {
-    console.warn("[security-event]", JSON.stringify({ type: event.type, severity: event.severity, endpoint: event.endpoint }));
+    console.warn(
+      "[security-event]",
+      JSON.stringify({ type: event.type, severity: event.severity, endpoint: event.endpoint }),
+    );
     return;
   }
 
@@ -122,8 +125,13 @@ async function qualify(event: SecurityEvent) {
         vector: event.type,
         confidence: rule.severity === "critical" ? "eleve" : "moyen",
         attribution_uncertain: true,
-        timeline: [{ at: new Date().toISOString(), what: `Seuil ${rule.threshold} atteint (${count})` }, { at: new Date().toISOString(), what: measures }],
-        evidence: [{ ip_hash: event.ipHash, event_type: event.type, count, window_seconds: rule.window_seconds }],
+        timeline: [
+          { at: new Date().toISOString(), what: `Seuil ${rule.threshold} atteint (${count})` },
+          { at: new Date().toISOString(), what: measures },
+        ],
+        evidence: [
+          { ip_hash: event.ipHash, event_type: event.type, count, window_seconds: rule.window_seconds },
+        ],
         remediation_proposed: recommendation(event.type),
       })
       .select("id")

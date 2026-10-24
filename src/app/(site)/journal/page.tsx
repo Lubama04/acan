@@ -34,7 +34,7 @@ export default async function JournalPage() {
           {posts.length === 0 ? (
             <p className="lede">Les premiers articles arrivent bientôt.</p>
           ) : (
-            <ul className="divide-y divide-border">
+            <ul className="divide-border divide-y">
               {posts.map((p) => (
                 <li key={p.id} className="py-8 first:pt-0">
                   <article>
@@ -47,7 +47,7 @@ export default async function JournalPage() {
                     <div className="mt-1">
                       <PostMeta post={p} />
                     </div>
-                    <p className="mt-3 text-slate">{p.excerpt}</p>
+                    <p className="text-slate mt-3">{p.excerpt}</p>
                   </article>
                 </li>
               ))}

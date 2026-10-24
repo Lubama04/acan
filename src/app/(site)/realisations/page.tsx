@@ -26,10 +26,14 @@ export default async function CaseStudiesPage() {
       />
       <div className="container-site space-y-14 py-16">
         {cases.map((c) => (
-          <article key={c.id} id={c.slug} className="grid gap-6 border-b border-border pb-14 last:border-0 lg:grid-cols-[1fr_1.5fr]">
+          <article
+            key={c.id}
+            id={c.slug}
+            className="border-border grid gap-6 border-b pb-14 last:border-0 lg:grid-cols-[1fr_1.5fr]"
+          >
             <header>
               <p className="eyebrow">{c.client_name}</p>
-              <h2 className="h2 mt-1 text-navy">{c.title}</h2>
+              <h2 className="h2 text-navy mt-1">{c.title}</h2>
               <p className="lede mt-3">{c.summary}</p>
             </header>
             <dl className="space-y-5">
@@ -41,8 +45,8 @@ export default async function CaseStudiesPage() {
                 .filter(([, v]) => v)
                 .map(([k, v]) => (
                   <div key={k}>
-                    <dt className="font-heading font-bold text-navy">{k}</dt>
-                    <dd className="mt-1 text-slate">{v}</dd>
+                    <dt className="font-heading text-navy font-bold">{k}</dt>
+                    <dd className="text-slate mt-1">{v}</dd>
                   </div>
                 ))}
             </dl>

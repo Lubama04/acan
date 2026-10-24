@@ -15,12 +15,12 @@ describe("ad fraud filtering", () => {
 
   it("flags repeated clicks and IP floods", () => {
     expect(classifyClick({ isBot: false, sessionClicksToday: 0, ipClicksLastHour: 0 })).toBeNull();
-    expect(classifyClick({ isBot: false, sessionClicksToday: LIMITS.clicksPerSessionPerDay, ipClicksLastHour: 0 })).toBe(
-      "repeat_click",
-    );
-    expect(classifyClick({ isBot: false, sessionClicksToday: 0, ipClicksLastHour: LIMITS.clicksPerIpPerHour })).toBe(
-      "ip_cap",
-    );
+    expect(
+      classifyClick({ isBot: false, sessionClicksToday: LIMITS.clicksPerSessionPerDay, ipClicksLastHour: 0 }),
+    ).toBe("repeat_click");
+    expect(
+      classifyClick({ isBot: false, sessionClicksToday: 0, ipClicksLastHour: LIMITS.clicksPerIpPerHour }),
+    ).toBe("ip_cap");
   });
 
   it("recognises common crawlers and scripts", () => {
@@ -28,7 +28,9 @@ describe("ad fraud filtering", () => {
     expect(isLikelyBot("curl/8.4.0")).toBe(true);
     expect(isLikelyBot("")).toBe(true);
     expect(
-      isLikelyBot("Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Mobile Safari/537.36"),
+      isLikelyBot(
+        "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Mobile Safari/537.36",
+      ),
     ).toBe(false);
   });
 });

@@ -7,7 +7,11 @@ import { liftBlock, toggleRule, updateIncident } from "../actions";
 export const metadata = { title: "Sécurité" };
 
 const fmt = (iso: string) =>
-  new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "medium", timeZone: "Africa/Ndjamena" }).format(new Date(iso));
+  new Intl.DateTimeFormat("fr-FR", {
+    dateStyle: "short",
+    timeStyle: "medium",
+    timeZone: "Africa/Ndjamena",
+  }).format(new Date(iso));
 
 const SEV_CLASS: Record<string, string> = {
   info: "bg-paper text-navy",
@@ -25,49 +29,63 @@ export default async function SecurityPage() {
   await requireAdmin("admin");
   const supabase = await createClient();
   const nowIso = new Date().toISOString();
-  const [{ data: incidents }, { data: events }, { data: blocks }, { data: rules }, { data: memory }] = await Promise.all([
-    supabase
-      .from("incidents")
-      .select("id, created_at, status, severity, title, asset, vector, confidence, attribution_uncertain, timeline, evidence, root_cause, impact, remediation_proposed, remediation_applied, validated_by")
-      .order("created_at", { ascending: false })
-      .limit(50),
-    supabase
-      .from("security_events")
-      .select("id, created_at, event_type, severity, endpoint, payload_summary")
-      .order("created_at", { ascending: false })
-      .limit(50),
-    supabase
-      .from("blocked_entities")
-      .select("id, entity_type, value, reason, expires_at, created_by, created_at")
-      .is("lifted_at", null)
-      .gt("expires_at", nowIso)
-      .order("created_at", { ascending: false }),
-    supabase.from("detection_rules").select("id, name, event_type, threshold, window_seconds, severity, block_minutes, enabled, proposed_by").order("name"),
-    supabase.from("security_memory").select("id, pattern_name, attack_type, cause, fix, occurrences, first_seen").order("first_seen", { ascending: false }).limit(20),
-  ]);
+  const [{ data: incidents }, { data: events }, { data: blocks }, { data: rules }, { data: memory }] =
+    await Promise.all([
+      supabase
+        .from("incidents")
+        .select(
+          "id, created_at, status, severity, title, asset, vector, confidence, attribution_uncertain, timeline, evidence, root_cause, impact, remediation_proposed, remediation_applied, validated_by",
+        )
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabase
+        .from("security_events")
+        .select("id, created_at, event_type, severity, endpoint, payload_summary")
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabase
+        .from("blocked_entities")
+        .select("id, entity_type, value, reason, expires_at, created_by, created_at")
+        .is("lifted_at", null)
+        .gt("expires_at", nowIso)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("detection_rules")
+        .select(
+          "id, name, event_type, threshold, window_seconds, severity, block_minutes, enabled, proposed_by",
+        )
+        .order("name"),
+      supabase
+        .from("security_memory")
+        .select("id, pattern_name, attack_type, cause, fix, occurrences, first_seen")
+        .order("first_seen", { ascending: false })
+        .limit(20),
+    ]);
 
   const checks = securityChecks(process.env);
   const score = scoreOf(checks);
   const open = (incidents ?? []).filter((i) => i.status !== "clos");
-  const bySeverity = ["critical", "high", "medium", "low", "info"].map((s) => [s, open.filter((i) => i.severity === s).length] as const);
+  const bySeverity = ["critical", "high", "medium", "low", "info"].map(
+    (s) => [s, open.filter((i) => i.severity === s).length] as const,
+  );
 
   return (
     <>
       <h1 className="h1 text-navy">Sécurité</h1>
-      <p className="mt-2 max-w-3xl text-slate">
-        Réponse défensive uniquement : blocages temporaires et réversibles, aucune action sur des systèmes tiers. Les
-        corrections sont proposées puis appliquées après validation humaine.
+      <p className="text-slate mt-2 max-w-3xl">
+        Réponse défensive uniquement : blocages temporaires et réversibles, aucune action sur des systèmes
+        tiers. Les corrections sont proposées puis appliquées après validation humaine.
       </p>
 
       <section aria-labelledby="score-title" className="mt-8 grid gap-6 lg:grid-cols-[16rem_1fr]">
-        <div className="rounded-lg border border-border bg-white p-6">
-          <h2 id="score-title" className="text-sm font-bold text-slate uppercase">
+        <div className="border-border rounded-lg border bg-white p-6">
+          <h2 id="score-title" className="text-slate text-sm font-bold uppercase">
             Score indicatif
           </h2>
-          <p className="font-heading text-6xl font-extrabold text-navy">{score}</p>
-          <p className="text-sm text-slate">sur 100 · indicateur, pas une certification</p>
+          <p className="font-heading text-navy text-6xl font-extrabold">{score}</p>
+          <p className="text-slate text-sm">sur 100 · indicateur, pas une certification</p>
         </div>
-        <ul className="space-y-2 rounded-lg border border-border bg-white p-4 text-sm">
+        <ul className="border-border space-y-2 rounded-lg border bg-white p-4 text-sm">
           {checks.map((c) => (
             <li key={c.id} className="grid gap-1 sm:grid-cols-[1.5rem_1fr_9rem]">
               <span aria-hidden="true" className={c.ok ? "text-[#1F7A4D]" : "text-destructive"}>
@@ -76,7 +94,7 @@ export default async function SecurityPage() {
               <span>
                 <span className="font-semibold">{c.label}</span>
                 <span className="sr-only">{c.ok ? " : conforme" : " : non conforme"}</span>
-                <span className="block text-slate">{c.evidence}</span>
+                <span className="text-slate block">{c.evidence}</span>
               </span>
               <span className="text-slate">Certitude : {c.certainty}</span>
             </li>
@@ -109,9 +127,10 @@ export default async function SecurityPage() {
         <ul className="mt-4 space-y-3">
           {(incidents ?? []).map((i) => (
             <li key={i.id}>
-              <details className="rounded-lg border border-border bg-white p-4">
+              <details className="border-border rounded-lg border bg-white p-4">
                 <summary className="cursor-pointer">
-                  <Sev s={i.severity} /> <span className="font-semibold">{i.title}</span> · {fmt(i.created_at)} · {i.status}
+                  <Sev s={i.severity} /> <span className="font-semibold">{i.title}</span> ·{" "}
+                  {fmt(i.created_at)} · {i.status}
                 </summary>
                 <dl className="mt-3 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-[12rem_1fr]">
                   <dt className="font-semibold">Actif</dt>
@@ -127,10 +146,15 @@ export default async function SecurityPage() {
                   <dd className="whitespace-pre-wrap">{i.remediation_proposed ?? "—"}</dd>
                   <dt className="font-semibold">Chronologie</dt>
                   <dd>
-                    <pre className="overflow-x-auto text-xs whitespace-pre-wrap">{JSON.stringify(i.timeline, null, 2)}</pre>
+                    <pre className="overflow-x-auto text-xs whitespace-pre-wrap">
+                      {JSON.stringify(i.timeline, null, 2)}
+                    </pre>
                   </dd>
                 </dl>
-                <form action={updateIncident} className="mt-4 grid gap-3 border-t border-border pt-4 md:grid-cols-2">
+                <form
+                  action={updateIncident}
+                  className="border-border mt-4 grid gap-3 border-t pt-4 md:grid-cols-2"
+                >
                   <input type="hidden" name="id" value={i.id} />
                   <label className="text-sm font-semibold">
                     Statut
@@ -144,25 +168,51 @@ export default async function SecurityPage() {
                   </label>
                   <label className="text-sm font-semibold">
                     Impact
-                    <input name="impact" defaultValue={i.impact ?? ""} className="field mt-1" maxLength={4000} />
+                    <input
+                      name="impact"
+                      defaultValue={i.impact ?? ""}
+                      className="field mt-1"
+                      maxLength={4000}
+                    />
                   </label>
                   <label className="text-sm font-semibold md:col-span-2">
                     Cause
-                    <textarea name="root_cause" defaultValue={i.root_cause ?? ""} rows={2} className="field mt-1" maxLength={4000} />
+                    <textarea
+                      name="root_cause"
+                      defaultValue={i.root_cause ?? ""}
+                      rows={2}
+                      className="field mt-1"
+                      maxLength={4000}
+                    />
                   </label>
                   <label className="text-sm font-semibold md:col-span-2">
                     Correction appliquée
-                    <textarea name="remediation_applied" defaultValue={i.remediation_applied ?? ""} rows={2} className="field mt-1" maxLength={8000} />
+                    <textarea
+                      name="remediation_applied"
+                      defaultValue={i.remediation_applied ?? ""}
+                      rows={2}
+                      className="field mt-1"
+                      maxLength={8000}
+                    />
                   </label>
                   <label className="flex items-center gap-3 text-sm md:col-span-2">
-                    <input type="checkbox" name="validate" className="size-5 accent-blue" defaultChecked={Boolean(i.validated_by)} />
+                    <input
+                      type="checkbox"
+                      name="validate"
+                      className="accent-blue size-5"
+                      defaultChecked={Boolean(i.validated_by)}
+                    />
                     Je valide la correction (validation humaine requise avant clôture)
                   </label>
                   <div className="flex flex-wrap gap-3 md:col-span-2">
                     <button type="submit" className="btn btn-primary">
                       Enregistrer
                     </button>
-                    <Link href={`/admin/securite/export/${i.id}`} className="btn btn-secondary" prefetch={false}>
+                    <Link
+                      href={`/admin/securite/export/${i.id}`}
+                      className="btn btn-secondary"
+                      prefetch={false}
+                    >
                       Exporter (JSON)
                     </Link>
                   </div>
@@ -171,7 +221,7 @@ export default async function SecurityPage() {
             </li>
           ))}
         </ul>
-        {(incidents ?? []).length === 0 && <p className="mt-3 text-slate">Aucun incident enregistré.</p>}
+        {(incidents ?? []).length === 0 && <p className="text-slate mt-3">Aucun incident enregistré.</p>}
       </section>
 
       <section aria-labelledby="blocks-title" className="mt-10">
@@ -180,7 +230,10 @@ export default async function SecurityPage() {
         </h2>
         <ul className="mt-3 space-y-2">
           {(blocks ?? []).map((b) => (
-            <li key={b.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-white p-3 text-sm">
+            <li
+              key={b.id}
+              className="border-border flex flex-wrap items-center justify-between gap-3 rounded-md border bg-white p-3 text-sm"
+            >
               <span>
                 {b.entity_type} <code>{b.value.slice(0, 12)}…</code> · {b.reason} · expire {fmt(b.expires_at)}
               </span>
@@ -193,27 +246,37 @@ export default async function SecurityPage() {
             </li>
           ))}
         </ul>
-        {(blocks ?? []).length === 0 && <p className="mt-3 text-slate">Aucun blocage actif.</p>}
+        {(blocks ?? []).length === 0 && <p className="text-slate mt-3">Aucun blocage actif.</p>}
       </section>
 
       <section aria-labelledby="events-title" className="mt-10">
         <h2 id="events-title" className="h2 text-navy">
           Derniers événements
         </h2>
-        <p className="text-sm text-slate">Actualisez la page pour voir les nouveaux événements.</p>
+        <p className="text-slate text-sm">Actualisez la page pour voir les nouveaux événements.</p>
         <table className="mt-3 w-full border-collapse bg-white text-left text-sm">
           <thead>
-            <tr className="border-b-2 border-navy">
-              <th scope="col" className="p-2">Date</th>
-              <th scope="col" className="p-2">Type</th>
-              <th scope="col" className="p-2">Gravité</th>
-              <th scope="col" className="p-2">Point d&apos;entrée</th>
-              <th scope="col" className="p-2">Résumé</th>
+            <tr className="border-navy border-b-2">
+              <th scope="col" className="p-2">
+                Date
+              </th>
+              <th scope="col" className="p-2">
+                Type
+              </th>
+              <th scope="col" className="p-2">
+                Gravité
+              </th>
+              <th scope="col" className="p-2">
+                Point d&apos;entrée
+              </th>
+              <th scope="col" className="p-2">
+                Résumé
+              </th>
             </tr>
           </thead>
           <tbody>
             {(events ?? []).map((e) => (
-              <tr key={e.id} className="border-b border-border">
+              <tr key={e.id} className="border-border border-b">
                 <td className="p-2 whitespace-nowrap">{fmt(e.created_at)}</td>
                 <td className="p-2">{e.event_type}</td>
                 <td className="p-2">
@@ -235,20 +298,30 @@ export default async function SecurityPage() {
         </h2>
         <table className="mt-3 w-full border-collapse bg-white text-left text-sm">
           <thead>
-            <tr className="border-b-2 border-navy">
-              <th scope="col" className="p-2">Règle</th>
-              <th scope="col" className="p-2">Seuil</th>
-              <th scope="col" className="p-2">Gravité</th>
-              <th scope="col" className="p-2">Blocage</th>
-              <th scope="col" className="p-2">État</th>
+            <tr className="border-navy border-b-2">
+              <th scope="col" className="p-2">
+                Règle
+              </th>
+              <th scope="col" className="p-2">
+                Seuil
+              </th>
+              <th scope="col" className="p-2">
+                Gravité
+              </th>
+              <th scope="col" className="p-2">
+                Blocage
+              </th>
+              <th scope="col" className="p-2">
+                État
+              </th>
             </tr>
           </thead>
           <tbody>
             {(rules ?? []).map((r) => (
-              <tr key={r.id} className="border-b border-border">
+              <tr key={r.id} className="border-border border-b">
                 <td className="p-2">
                   {r.name}
-                  {r.proposed_by === "system" && <span className="ms-2 text-xs text-gold-ink">proposée</span>}
+                  {r.proposed_by === "system" && <span className="text-gold-ink ms-2 text-xs">proposée</span>}
                 </td>
                 <td className="p-2">
                   {r.threshold} {r.event_type} / {Math.round(r.window_seconds / 60)} min
@@ -278,13 +351,16 @@ export default async function SecurityPage() {
         </h2>
         <ul className="mt-3 space-y-2 text-sm">
           {(memory ?? []).map((m) => (
-            <li key={m.id} className="rounded-md border border-border bg-white p-3">
-              <span className="font-semibold">{m.pattern_name}</span> · {m.attack_type} · {m.occurrences} occurrence(s)
-              {m.fix && <span className="block text-slate">Correction : {m.fix}</span>}
+            <li key={m.id} className="border-border rounded-md border bg-white p-3">
+              <span className="font-semibold">{m.pattern_name}</span> · {m.attack_type} · {m.occurrences}{" "}
+              occurrence(s)
+              {m.fix && <span className="text-slate block">Correction : {m.fix}</span>}
             </li>
           ))}
         </ul>
-        {(memory ?? []).length === 0 && <p className="mt-3 text-slate">Alimentée automatiquement à la clôture des incidents.</p>}
+        {(memory ?? []).length === 0 && (
+          <p className="text-slate mt-3">Alimentée automatiquement à la clôture des incidents.</p>
+        )}
       </section>
     </>
   );

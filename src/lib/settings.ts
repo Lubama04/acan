@@ -63,7 +63,8 @@ export function mergeSettings(rows: { key: string; value: unknown }[]): SiteSett
     const fallback = (DEFAULT_SETTINGS as Record<string, unknown>)[key];
     if (typeof fallback === "boolean") merged[key] = value === true;
     else if (value === null || value === "") merged[key] = typeof fallback === "string" ? fallback : null;
-    else if (typeof fallback === "object" && fallback !== null) merged[key] = typeof value === "object" ? value : {};
+    else if (typeof fallback === "object" && fallback !== null)
+      merged[key] = typeof value === "object" ? value : {};
     else merged[key] = String(value);
   }
   return merged as SiteSettings;

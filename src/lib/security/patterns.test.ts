@@ -5,8 +5,8 @@ describe("detectSuspiciousPayload", () => {
   it("flags classic injection payloads", () => {
     expect(detectSuspiciousPayload(["' OR '1'='1"])).toContain("sql_injection");
     expect(detectSuspiciousPayload(["1 UNION SELECT password FROM users"])).toContain("sql_injection");
-    expect(detectSuspiciousPayload(['<script>alert(1)</script>'])).toContain("xss");
-    expect(detectSuspiciousPayload(['<img src=x onerror=alert(1)>'])).toContain("xss");
+    expect(detectSuspiciousPayload(["<script>alert(1)</script>"])).toContain("xss");
+    expect(detectSuspiciousPayload(["<img src=x onerror=alert(1)>"])).toContain("xss");
     expect(detectSuspiciousPayload(["../../etc/passwd"])).toContain("path_traversal");
     expect(detectSuspiciousPayload(["${jndi:ldap://x}"])).toContain("template_injection");
   });

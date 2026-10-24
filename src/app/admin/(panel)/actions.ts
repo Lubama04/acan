@@ -25,11 +25,13 @@ const messageStatus = z.enum(["new", "answered", "archived"]);
 
 export async function updateLeadStatus(formData: FormData): Promise<void> {
   await requireAdmin("admin");
-  const p = z.object({ id: uuid, status: leadStatus, admin_notes: z.string().max(4000).optional() }).safeParse({
-    id: formData.get("id"),
-    status: formData.get("status"),
-    admin_notes: formData.get("admin_notes") ?? undefined,
-  });
+  const p = z
+    .object({ id: uuid, status: leadStatus, admin_notes: z.string().max(4000).optional() })
+    .safeParse({
+      id: formData.get("id"),
+      status: formData.get("status"),
+      admin_notes: formData.get("admin_notes") ?? undefined,
+    });
   if (!p.success) return void fail("lead.update", null);
   const supabase = await createClient();
   const { error } = await supabase
@@ -42,10 +44,15 @@ export async function updateLeadStatus(formData: FormData): Promise<void> {
 
 export async function updateMessageStatus(formData: FormData): Promise<void> {
   await requireAdmin("admin");
-  const p = z.object({ id: uuid, status: messageStatus }).safeParse({ id: formData.get("id"), status: formData.get("status") });
+  const p = z
+    .object({ id: uuid, status: messageStatus })
+    .safeParse({ id: formData.get("id"), status: formData.get("status") });
   if (!p.success) return void fail("message.update", null);
   const supabase = await createClient();
-  const { error } = await supabase.from("contact_messages").update({ status: p.data.status }).eq("id", p.data.id);
+  const { error } = await supabase
+    .from("contact_messages")
+    .update({ status: p.data.status })
+    .eq("id", p.data.id);
   if (error) fail("message.update", error);
   revalidatePath("/admin/demandes");
 }
@@ -54,7 +61,11 @@ export async function updateMessageStatus(formData: FormData): Promise<void> {
 export async function deletePersonalRecord(formData: FormData): Promise<void> {
   await requireAdmin("admin");
   const p = z
-    .object({ id: uuid, table: z.enum(["leads", "contact_messages", "newsletter_subscribers"]), confirm: z.literal("SUPPRIMER") })
+    .object({
+      id: uuid,
+      table: z.enum(["leads", "contact_messages", "newsletter_subscribers"]),
+      confirm: z.literal("SUPPRIMER"),
+    })
     .safeParse({ id: formData.get("id"), table: formData.get("table"), confirm: formData.get("confirm") });
   if (!p.success) return void fail("record.delete", null);
   const supabase = await createClient();
@@ -121,7 +132,9 @@ export async function savePost(_prev: ActionResult, formData: FormData): Promise
 
   let publishedAt: string | null = null;
   if (data.status === "published") {
-    const existing = id ? (await supabase.from("posts").select("published_at").eq("id", id).single()).data : null;
+    const existing = id
+      ? (await supabase.from("posts").select("published_at").eq("id", id).single()).data
+      : null;
     publishedAt = existing?.published_at ?? new Date().toISOString();
   }
   const row = {
@@ -148,7 +161,9 @@ export async function savePost(_prev: ActionResult, formData: FormData): Promise
 
 export async function deletePost(formData: FormData): Promise<void> {
   await requireAdmin("admin");
-  const p = z.object({ id: uuid, confirm: z.literal("SUPPRIMER") }).safeParse({ id: formData.get("id"), confirm: formData.get("confirm") });
+  const p = z
+    .object({ id: uuid, confirm: z.literal("SUPPRIMER") })
+    .safeParse({ id: formData.get("id"), confirm: formData.get("confirm") });
   if (!p.success) return void fail("post.delete", null);
   const supabase = await createClient();
   const { error } = await supabase.from("posts").delete().eq("id", p.data.id);
@@ -164,9 +179,17 @@ export async function updateAdSlot(formData: FormData): Promise<void> {
     .object({
       key: z.enum(["header", "in_article", "sidebar", "footer"]),
       enabled: z.boolean(),
-      adsense_slot_id: z.string().regex(/^\d{6,20}$/).optional().or(z.literal("")),
+      adsense_slot_id: z
+        .string()
+        .regex(/^\d{6,20}$/)
+        .optional()
+        .or(z.literal("")),
     })
-    .safeParse({ key: formData.get("key"), enabled: formData.get("enabled") === "on", adsense_slot_id: formData.get("adsense_slot_id") ?? "" });
+    .safeParse({
+      key: formData.get("key"),
+      enabled: formData.get("enabled") === "on",
+      adsense_slot_id: formData.get("adsense_slot_id") ?? "",
+    });
   if (!p.success) return void fail("slot.update", null);
   const supabase = await createClient();
   const { error } = await supabase
@@ -190,7 +213,10 @@ const campaignSchema = z
     ends_at: z.string().min(10),
     max_impressions: z.coerce.number().int().positive().optional(),
   })
-  .refine((c) => Date.parse(c.ends_at) > Date.parse(c.starts_at), { message: "La fin doit suivre le début", path: ["ends_at"] });
+  .refine((c) => Date.parse(c.ends_at) > Date.parse(c.starts_at), {
+    message: "La fin doit suivre le début",
+    path: ["ends_at"],
+  });
 
 export async function createCampaign(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   await requireAdmin("admin");
@@ -220,10 +246,15 @@ export async function createCampaign(_prev: ActionResult, formData: FormData): P
 
 export async function toggleCampaign(formData: FormData): Promise<void> {
   await requireAdmin("admin");
-  const p = z.object({ id: uuid, active: z.enum(["true", "false"]) }).safeParse({ id: formData.get("id"), active: formData.get("active") });
+  const p = z
+    .object({ id: uuid, active: z.enum(["true", "false"]) })
+    .safeParse({ id: formData.get("id"), active: formData.get("active") });
   if (!p.success) return void fail("campaign.toggle", null);
   const supabase = await createClient();
-  const { error } = await supabase.from("ad_campaigns").update({ active: p.data.active === "true" }).eq("id", p.data.id);
+  const { error } = await supabase
+    .from("ad_campaigns")
+    .update({ active: p.data.active === "true" })
+    .eq("id", p.data.id);
   if (error) fail("campaign.toggle", error);
   updateTag("ads");
   revalidatePath("/admin/publicite");
@@ -239,13 +270,22 @@ const SETTING_RULES: Record<string, z.ZodType> = {
   share_capital: z.string().trim().max(60),
   address: z.string().trim().max(200),
   city: z.string().trim().min(2).max(80),
-  phone: z.string().trim().regex(/^(\+?[0-9 ()-]{6,20})?$/),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^(\+?[0-9 ()-]{6,20})?$/),
   email: z.string().trim().email().or(z.literal("")),
   publication_director: z.string().trim().max(120),
   privacy_contact_email: z.string().trim().email().or(z.literal("")),
   security_contact_email: z.string().trim().email().or(z.literal("")),
 };
-const SETTING_FLAGS = ["feature_team", "feature_case_studies", "feature_newsletter", "feature_media_kit", "adsense_enabled"];
+const SETTING_FLAGS = [
+  "feature_team",
+  "feature_case_studies",
+  "feature_newsletter",
+  "feature_media_kit",
+  "adsense_enabled",
+];
 
 export async function saveSettings(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   await requireAdmin("admin");
@@ -261,7 +301,8 @@ export async function saveSettings(_prev: ActionResult, formData: FormData): Pro
   const socials: Record<string, string> = {};
   for (const n of ["facebook", "linkedin", "tiktok", "instagram"]) {
     const v = String(formData.get(`social_${n}`) ?? "").trim();
-    if (v && !/^https:\/\/[^\s]+$/.test(v)) return { ok: false, message: `Lien ${n} invalide (https:// requis)` };
+    if (v && !/^https:\/\/[^\s]+$/.test(v))
+      return { ok: false, message: `Lien ${n} invalide (https:// requis)` };
     if (v) socials[n] = v;
   }
   rows.push({ key: "social_links", value: socials });
@@ -292,10 +333,15 @@ export async function liftBlock(formData: FormData): Promise<void> {
 
 export async function toggleRule(formData: FormData): Promise<void> {
   await requireAdmin("admin");
-  const p = z.object({ id: uuid, enabled: z.enum(["true", "false"]) }).safeParse({ id: formData.get("id"), enabled: formData.get("enabled") });
+  const p = z
+    .object({ id: uuid, enabled: z.enum(["true", "false"]) })
+    .safeParse({ id: formData.get("id"), enabled: formData.get("enabled") });
   if (!p.success) return void fail("rule.toggle", null);
   const supabase = await createClient();
-  const { error } = await supabase.from("detection_rules").update({ enabled: p.data.enabled === "true" }).eq("id", p.data.id);
+  const { error } = await supabase
+    .from("detection_rules")
+    .update({ enabled: p.data.enabled === "true" })
+    .eq("id", p.data.id);
   if (error) fail("rule.toggle", error);
   revalidatePath("/admin/securite");
 }
@@ -335,7 +381,11 @@ export async function updateIncident(formData: FormData): Promise<void> {
 
   // Learning (SILS phase 7): a closed incident feeds security_memory.
   if (rest.status === "clos") {
-    const { data: inc } = await supabase.from("incidents").select("title, vector, root_cause, remediation_applied, evidence").eq("id", id).single();
+    const { data: inc } = await supabase
+      .from("incidents")
+      .select("title, vector, root_cause, remediation_applied, evidence")
+      .eq("id", id)
+      .single();
     if (inc) {
       await supabase.from("security_memory").insert({
         pattern_name: inc.title.slice(0, 120),

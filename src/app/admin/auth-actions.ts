@@ -32,21 +32,47 @@ async function loginAllowed(ipHash: string) {
 export async function signIn(_prev: AuthState, formData: FormData): Promise<AuthState> {
   const ctx = await requestContext();
   if (!(await loginAllowed(ctx.ipHash))) {
-    await logSecurityEvent({ type: "rate_limited", severity: "medium", ipHash: ctx.ipHash, userAgent: ctx.userAgent, endpoint: "/admin/login" });
+    await logSecurityEvent({
+      type: "rate_limited",
+      severity: "medium",
+      ipHash: ctx.ipHash,
+      userAgent: ctx.userAgent,
+      endpoint: "/admin/login",
+    });
     return { error: "Trop de tentatives. Réessayez dans quinze minutes." };
   }
   const parsed = loginSchema.safeParse({ email: formData.get("email"), password: formData.get("password") });
   if (!parsed.success) {
-    await logSecurityEvent({ type: "login_failed", severity: "low", ipHash: ctx.ipHash, userAgent: ctx.userAgent, endpoint: "/admin/login", summary: { reason: "invalid_format" } });
+    await logSecurityEvent({
+      type: "login_failed",
+      severity: "low",
+      ipHash: ctx.ipHash,
+      userAgent: ctx.userAgent,
+      endpoint: "/admin/login",
+      summary: { reason: "invalid_format" },
+    });
     return { error: GENERIC };
   }
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error || !data.user) {
-    await logSecurityEvent({ type: "login_failed", severity: "low", ipHash: ctx.ipHash, userAgent: ctx.userAgent, endpoint: "/admin/login" });
+    await logSecurityEvent({
+      type: "login_failed",
+      severity: "low",
+      ipHash: ctx.ipHash,
+      userAgent: ctx.userAgent,
+      endpoint: "/admin/login",
+    });
     return { error: GENERIC };
   }
-  await logSecurityEvent({ type: "login_succeeded", severity: "info", userId: data.user.id, ipHash: ctx.ipHash, userAgent: ctx.userAgent, endpoint: "/admin/login" });
+  await logSecurityEvent({
+    type: "login_succeeded",
+    severity: "info",
+    userId: data.user.id,
+    ipHash: ctx.ipHash,
+    userAgent: ctx.userAgent,
+    endpoint: "/admin/login",
+  });
   redirect("/admin/mfa");
 }
 
@@ -62,7 +88,10 @@ export async function startEnrollment(): Promise<AuthState> {
   for (const f of factors?.all ?? []) {
     if (f.status === "unverified") await supabase.auth.mfa.unenroll({ factorId: f.id });
   }
-  const { data, error } = await supabase.auth.mfa.enroll({ factorType: "totp", friendlyName: `admin-${Date.now()}` });
+  const { data, error } = await supabase.auth.mfa.enroll({
+    factorType: "totp",
+    friendlyName: `admin-${Date.now()}`,
+  });
   if (error || !data) return { error: "Impossible de démarrer la configuration. Réessayez." };
   return { qr: data.totp.qr_code, secret: data.totp.secret, factorId: data.id };
 }
@@ -72,14 +101,25 @@ const codeSchema = z.object({ factorId: z.string().uuid(), code: z.string().rege
 export async function verifyMfa(_prev: AuthState, formData: FormData): Promise<AuthState> {
   const ctx = await requestContext();
   const parsed = codeSchema.safeParse({ factorId: formData.get("factorId"), code: formData.get("code") });
-  if (!parsed.success) return { error: "Saisissez le code à 6 chiffres de votre application.", factorId: String(formData.get("factorId") ?? "") };
+  if (!parsed.success)
+    return {
+      error: "Saisissez le code à 6 chiffres de votre application.",
+      factorId: String(formData.get("factorId") ?? ""),
+    };
   const supabase = await createClient();
   const { error } = await supabase.auth.mfa.challengeAndVerify(parsed.data);
   if (error) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    await logSecurityEvent({ type: "mfa_failed", severity: "low", userId: user?.id, ipHash: ctx.ipHash, userAgent: ctx.userAgent, endpoint: "/admin/mfa" });
+    await logSecurityEvent({
+      type: "mfa_failed",
+      severity: "low",
+      userId: user?.id,
+      ipHash: ctx.ipHash,
+      userAgent: ctx.userAgent,
+      endpoint: "/admin/mfa",
+    });
     return { error: "Code incorrect ou expiré.", factorId: parsed.data.factorId };
   }
   redirect("/admin");

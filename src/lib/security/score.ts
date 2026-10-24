@@ -17,7 +17,8 @@ export function securityChecks(env: Record<string, string | undefined>): Check[]
       label: "RLS activée sur toutes les tables, politiques testées",
       ok: true,
       weight: 25,
-      evidence: "Tests supabase/tests/rls.test.sql (anonyme, utilisateur, admin sans liste blanche, sans MFA, avec MFA) + test de mutation.",
+      evidence:
+        "Tests supabase/tests/rls.test.sql (anonyme, utilisateur, admin sans liste blanche, sans MFA, avec MFA) + test de mutation.",
       certainty: "vérifié",
     },
     {
@@ -33,7 +34,8 @@ export function securityChecks(env: Record<string, string | undefined>): Check[]
       label: "En-têtes de sécurité et CSP à nonce",
       ok: true,
       weight: 15,
-      evidence: "proxy.ts (CSP nonce + strict-dynamic, HSTS, X-Frame-Options, Permissions-Policy) ; tests unitaires csp.test.ts.",
+      evidence:
+        "proxy.ts (CSP nonce + strict-dynamic, HSTS, X-Frame-Options, Permissions-Policy) ; tests unitaires csp.test.ts.",
       certainty: "vérifié",
     },
     {
@@ -41,7 +43,8 @@ export function securityChecks(env: Record<string, string | undefined>): Check[]
       label: "Administration : MFA obligatoire, liste blanche, rôles séparés",
       ok: true,
       weight: 15,
-      evidence: "private.is_admin() exige rôle + e-mail en liste blanche + aal2 ; requireAdmin() sur chaque page et action.",
+      evidence:
+        "private.is_admin() exige rôle + e-mail en liste blanche + aal2 ; requireAdmin() sur chaque page et action.",
       certainty: "vérifié",
     },
     {
@@ -59,7 +62,10 @@ export function securityChecks(env: Record<string, string | undefined>): Check[]
       label: "Alertes e-mail pour les incidents élevés et critiques",
       ok: Boolean(env.RESEND_API_KEY && env.ALERT_EMAIL_TO),
       weight: 10,
-      evidence: env.RESEND_API_KEY && env.ALERT_EMAIL_TO ? "Resend configuré." : "RESEND_API_KEY ou ALERT_EMAIL_TO manquant : aucune alerte envoyée.",
+      evidence:
+        env.RESEND_API_KEY && env.ALERT_EMAIL_TO
+          ? "Resend configuré."
+          : "RESEND_API_KEY ou ALERT_EMAIL_TO manquant : aucune alerte envoyée.",
       certainty: "déclaratif",
     },
     {

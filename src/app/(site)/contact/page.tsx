@@ -72,7 +72,12 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
               <div>
                 <dt className="font-semibold">WhatsApp</dt>
                 <dd>
-                  <a href={`https://wa.me/${whatsapp}`} className="link" target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={`https://wa.me/${whatsapp}`}
+                    className="link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Écrire sur WhatsApp
                   </a>
                 </dd>
@@ -81,8 +86,8 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
           </dl>
           {!s.phone && !s.email && (
             <p className="notice text-sm">
-              Le téléphone et l&apos;adresse e-mail de l&apos;agence seront publiés ici prochainement. Le formulaire est
-              opérationnel.
+              Le téléphone et l&apos;adresse e-mail de l&apos;agence seront publiés ici prochainement. Le
+              formulaire est opérationnel.
             </p>
           )}
         </aside>

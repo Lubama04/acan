@@ -21,7 +21,9 @@ export function Markdown({ children }: { children: string }) {
             );
           },
           // eslint-disable-next-line @next/next/no-img-element
-          img: ({ src, alt }) => <img src={typeof src === "string" ? src : ""} alt={alt ?? ""} loading="lazy" decoding="async" />,
+          img: ({ src, alt }) => (
+            <img src={typeof src === "string" ? src : ""} alt={alt ?? ""} loading="lazy" decoding="async" />
+          ),
           h1: ({ children: c }) => <h2>{c}</h2>,
         }}
       >

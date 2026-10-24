@@ -8,7 +8,10 @@ export function LoginForm() {
   return (
     <form action={action} className="space-y-5">
       {state.error && (
-        <p role="alert" className="rounded-md border border-destructive bg-[#FEF3F2] p-3 font-semibold text-destructive">
+        <p
+          role="alert"
+          className="border-destructive text-destructive rounded-md border bg-[#FEF3F2] p-3 font-semibold"
+        >
           {state.error}
         </p>
       )}
@@ -22,7 +25,15 @@ export function LoginForm() {
         <label htmlFor="password" className="field-label">
           Mot de passe
         </label>
-        <input id="password" name="password" type="password" autoComplete="current-password" required minLength={12} className="field" />
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          required
+          minLength={12}
+          className="field"
+        />
       </div>
       <button type="submit" className="btn btn-primary w-full" disabled={pending}>
         {pending ? "Connexion…" : "Se connecter"}

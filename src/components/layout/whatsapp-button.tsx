@@ -2,7 +2,9 @@
 export function WhatsAppButton() {
   const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
   if (!number || !/^\d{8,15}$/.test(number)) return null;
-  const text = encodeURIComponent("Bonjour Africa Média, je souhaite échanger sur un projet de communication.");
+  const text = encodeURIComponent(
+    "Bonjour Africa Média, je souhaite échanger sur un projet de communication.",
+  );
   return (
     <a
       href={`https://wa.me/${number}?text=${text}`}

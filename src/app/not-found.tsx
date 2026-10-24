@@ -5,7 +5,7 @@ export default function RootNotFound() {
   return (
     <main className="container-site py-24">
       <p className="eyebrow">Erreur 404</p>
-      <h1 className="h1 mt-2 text-navy">Cette page n&apos;existe pas</h1>
+      <h1 className="h1 text-navy mt-2">Cette page n&apos;existe pas</h1>
       <Link href="/" className="btn btn-primary mt-8">
         Retour à l&apos;accueil
       </Link>

@@ -118,6 +118,13 @@
     text-transform: uppercase;
     color: var(--color-gold-ink);
   }
+  .display,
+  .h1,
+  .h2,
+  .h3 {
+    font-family: var(--font-display), system-ui, sans-serif;
+    letter-spacing: -0.015em;
+  }
   .display {
     font-size: clamp(2.25rem, 1.6rem + 3vw, 3.5rem);
     line-height: 1.05;
@@ -268,10 +275,12 @@
     color: var(--color-blue);
     text-decoration: underline;
   }
-  .prose-am table {
-    display: block;
-    width: 100%;
+  .table-scroll {
     overflow-x: auto;
+    margin: 0 0 1.25rem;
+  }
+  .prose-am table {
+    width: 100%;
     border-collapse: collapse;
     margin: 0 0 1.25rem;
     font-size: 0.95rem;

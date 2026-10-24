@@ -4,7 +4,15 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { useConsent } from "@/components/consent/consent-provider";
 
 /** One AdSense unit. Without consent it renders the fallback (house ad) in the same reserved box. */
-export function AdSenseUnit({ clientId, slotId, fallback }: { clientId: string; slotId: string; fallback: ReactNode }) {
+export function AdSenseUnit({
+  clientId,
+  slotId,
+  fallback,
+}: {
+  clientId: string;
+  slotId: string;
+  fallback: ReactNode;
+}) {
   const { consent } = useConsent();
   const pushed = useRef(false);
 

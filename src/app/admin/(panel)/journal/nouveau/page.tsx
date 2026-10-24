@@ -8,9 +8,9 @@ export default async function NewPostPage() {
   return (
     <>
       <h1 className="h1 text-navy">Nouvel article</h1>
-      <p className="mt-2 text-slate">
-        Contenu d&apos;agence uniquement : conseils, études de cas autorisées, actualités de l&apos;agence, ressources. Pas
-        d&apos;actualité générale ni de politique partisane.
+      <p className="text-slate mt-2">
+        Contenu d&apos;agence uniquement : conseils, études de cas autorisées, actualités de l&apos;agence,
+        ressources. Pas d&apos;actualité générale ni de politique partisane.
       </p>
       <div className="mt-6">
         <PostForm />

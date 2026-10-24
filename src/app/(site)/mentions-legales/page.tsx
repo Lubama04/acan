@@ -24,7 +24,10 @@ export default async function LegalNoticePage() {
             RCCM : {s.rccm} · NIF : {s.nif}
           </>
         ) : (
-          <>Société {s.registration_status} : les numéros RCCM et NIF seront publiés sur cette page dès leur délivrance.</>
+          <>
+            Société {s.registration_status} : les numéros RCCM et NIF seront publiés sur cette page dès leur
+            délivrance.
+          </>
         )}
         <br />
         Siège : {s.address ? `${s.address}, ` : ""}
@@ -32,12 +35,14 @@ export default async function LegalNoticePage() {
       </p>
       <p>
         Contact :{" "}
-        {s.email ? <a href={`mailto:${s.email}`}>{s.email}</a> : <Link href="/contact">formulaire de contact</Link>}
+        {s.email ? (
+          <a href={`mailto:${s.email}`}>{s.email}</a>
+        ) : (
+          <Link href="/contact">formulaire de contact</Link>
+        )}
         {s.phone ? ` · ${s.phone}` : ""}.
       </p>
-      <p>
-        Responsable de la publication : {s.publication_director ?? "le gérant de la société"}.
-      </p>
+      <p>Responsable de la publication : {s.publication_director ?? "le gérant de la société"}.</p>
 
       <h2>Hébergement</h2>
       <p>
@@ -48,15 +53,16 @@ export default async function LegalNoticePage() {
 
       <h2>Propriété intellectuelle</h2>
       <p>
-        Les textes, le logo et les éléments graphiques de ce site appartiennent à {s.legal_name}, sauf mention contraire.
-        Toute reproduction sans autorisation écrite est interdite, à l&apos;exception des courtes citations avec mention de la
-        source et lien vers la page.
+        Les textes, le logo et les éléments graphiques de ce site appartiennent à {s.legal_name}, sauf mention
+        contraire. Toute reproduction sans autorisation écrite est interdite, à l&apos;exception des courtes
+        citations avec mention de la source et lien vers la page.
       </p>
 
       <h2>Contenus publicitaires</h2>
       <p>
-        Les annonces et les contenus financés par un partenaire sont signalés par la mention « Publicité » ou « Contenu
-        sponsorisé ». Voir la <Link href="/contenus-sponsorises">politique des contenus sponsorisés</Link>.
+        Les annonces et les contenus financés par un partenaire sont signalés par la mention « Publicité » ou
+        « Contenu sponsorisé ». Voir la{" "}
+        <Link href="/contenus-sponsorises">politique des contenus sponsorisés</Link>.
       </p>
 
       <h2>Données personnelles et cookies</h2>

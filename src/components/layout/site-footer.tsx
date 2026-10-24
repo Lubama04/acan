@@ -7,17 +7,19 @@ import { ConsentSettingsButton } from "@/components/consent/consent-settings-but
 export async function SiteFooter() {
   const s = await getSettings();
   const nav = MAIN_NAV.filter((item) => !item.flag || s[item.flag]);
-  const socials = Object.entries(s.social_links).filter(([, url]) => typeof url === "string" && url.startsWith("https://"));
+  const socials = Object.entries(s.social_links).filter(
+    ([, url]) => typeof url === "string" && url.startsWith("https://"),
+  );
 
   return (
-    <footer className="mt-auto bg-navy text-white">
+    <footer className="bg-navy mt-auto text-white">
       <div className="container-site grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <Logo variant="white" className="h-10 w-auto" />
-          <p className="mt-4 max-w-sm text-mist">
+          <p className="text-mist mt-4 max-w-sm">
             Agence de communication basée à {s.city}. Institutions, ONG et entreprises.
           </p>
-          <p className="mt-4 text-sm text-mist">
+          <p className="text-mist mt-4 text-sm">
             {s.legal_name}
             {s.legal_form ? `, ${s.legal_form}` : ""}
             {isRegistered(s) ? (
@@ -50,7 +52,7 @@ export async function SiteFooter() {
         </div>
 
         <nav aria-label="Plan du site">
-          <h2 className="text-sm font-bold tracking-wide text-gold-light uppercase">L&apos;agence</h2>
+          <h2 className="text-gold-light text-sm font-bold tracking-wide uppercase">L&apos;agence</h2>
           <ul className="mt-3 space-y-2">
             {nav.map((item) => (
               <li key={item.href}>
@@ -68,7 +70,7 @@ export async function SiteFooter() {
         </nav>
 
         <nav aria-label="Informations légales">
-          <h2 className="text-sm font-bold tracking-wide text-gold-light uppercase">Informations</h2>
+          <h2 className="text-gold-light text-sm font-bold tracking-wide uppercase">Informations</h2>
           <ul className="mt-3 space-y-2">
             {LEGAL_NAV.map((item) => (
               <li key={item.href}>
@@ -94,7 +96,7 @@ export async function SiteFooter() {
           )}
         </nav>
       </div>
-      <div className="h-1.5 bg-gold" aria-hidden="true" />
+      <div className="bg-gold h-1.5" aria-hidden="true" />
     </footer>
   );
 }

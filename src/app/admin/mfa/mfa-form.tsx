@@ -30,8 +30,14 @@ export function MfaForm({ factorId: existing }: { factorId?: string }) {
         <div className="space-y-3">
           <p>Scannez ce code avec votre application, puis saisissez le code affiché.</p>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={enrol.qr} alt="QR code de configuration de la double authentification" width={200} height={200} className="mx-auto" />
-          <p className="text-sm text-slate">
+          <img
+            src={enrol.qr}
+            alt="QR code de configuration de la double authentification"
+            width={200}
+            height={200}
+            className="mx-auto"
+          />
+          <p className="text-slate text-sm">
             Saisie manuelle : <code className="break-all">{enrol.secret}</code>
           </p>
         </div>
@@ -40,7 +46,10 @@ export function MfaForm({ factorId: existing }: { factorId?: string }) {
         <form action={action} className="space-y-4">
           <input type="hidden" name="factorId" value={factorId} />
           {state.error && (
-            <p role="alert" className="rounded-md border border-destructive bg-[#FEF3F2] p-3 font-semibold text-destructive">
+            <p
+              role="alert"
+              className="border-destructive text-destructive rounded-md border bg-[#FEF3F2] p-3 font-semibold"
+            >
               {state.error}
             </p>
           )}

@@ -8,15 +8,18 @@ export function pageMetadata({
   description,
   path,
   type = "website",
+  absoluteTitle = false,
 }: {
   title: string;
   description: string;
   path: string;
   type?: "website" | "article";
+  /** Skip the "· Africa Média" template suffix (home page). */
+  absoluteTitle?: boolean;
 }): Metadata {
   const url = `${SITE_URL}${path === "/" ? "" : path}`;
   return {
-    title,
+    title: absoluteTitle ? { absolute: title } : title,
     description,
     alternates: {
       canonical: url,
@@ -32,7 +35,9 @@ type Json = Record<string, unknown>;
 
 /** Organization + ProfessionalService (LocalBusiness). Only facts present in site_settings are emitted. */
 export function organizationJsonLd(s: SiteSettings): Json[] {
-  const sameAs = Object.values(s.social_links).filter((u): u is string => typeof u === "string" && u.startsWith("https://"));
+  const sameAs = Object.values(s.social_links).filter(
+    (u): u is string => typeof u === "string" && u.startsWith("https://"),
+  );
   const address: Json = { "@type": "PostalAddress", addressLocality: s.city, addressCountry: "TD" };
   if (s.address) address.streetAddress = s.address;
   const org: Json = {

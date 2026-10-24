@@ -18,14 +18,14 @@ function HouseAd({ slot }: { slot: AdSlotKey }) {
   return (
     <Link
       href="/devis"
-      className={`flex size-full flex-col justify-center gap-2 bg-navy px-5 text-white no-underline hover:bg-[#0a2f63] ${
+      className={`bg-navy flex size-full flex-col justify-center gap-2 px-5 text-white no-underline hover:bg-[#0a2f63] ${
         tall ? "items-start" : "items-start md:flex-row md:items-center md:justify-between"
       }`}
     >
       <span className="font-heading text-lg leading-tight font-bold">
         Une communication claire pour votre organisation
       </span>
-      <span className="text-sm font-semibold text-gold-light underline">Demander un devis</span>
+      <span className="text-gold-light text-sm font-semibold underline">Demander un devis</span>
     </Link>
   );
 }
@@ -35,7 +35,11 @@ function HouseAd({ slot }: { slot: AdSlotKey }) {
  * Never place it on legal pages, forms or the admin area (see isAdFreePath).
  */
 export async function AdSlot({ slot, className = "" }: { slot: AdSlotKey; className?: string }) {
-  const [slots, settings, campaign] = await Promise.all([getAdSlots(), getSettings(), getCampaignForSlot(slot)]);
+  const [slots, settings, campaign] = await Promise.all([
+    getAdSlots(),
+    getSettings(),
+    getCampaignForSlot(slot),
+  ]);
   const config = slots.find((s) => s.key === slot);
   if (config && !config.enabled) return null;
 
@@ -46,8 +50,10 @@ export async function AdSlot({ slot, className = "" }: { slot: AdSlotKey; classN
 
   return (
     <aside aria-label={label} className={`${hiddenOnMobile} ${className}`}>
-      <p className="mb-1 text-center text-xs font-semibold tracking-wide text-slate uppercase">{label}</p>
-      <div className={`relative mx-auto overflow-hidden rounded-sm border border-border bg-paper ${BOX[slot]}`}>
+      <p className="text-slate mb-1 text-center text-xs font-semibold tracking-wide uppercase">{label}</p>
+      <div
+        className={`border-border bg-paper relative mx-auto overflow-hidden rounded-sm border ${BOX[slot]}`}
+      >
         {campaign ? (
           <a
             href={`/api/ads/click/${campaign.id}`}
@@ -67,7 +73,11 @@ export async function AdSlot({ slot, className = "" }: { slot: AdSlotKey; classN
             <ImpressionBeacon campaignId={campaign.id} />
           </a>
         ) : adsenseReady ? (
-          <AdSenseUnit clientId={clientId!} slotId={config!.adsense_slot_id!} fallback={<HouseAd slot={slot} />} />
+          <AdSenseUnit
+            clientId={clientId!}
+            slotId={config!.adsense_slot_id!}
+            fallback={<HouseAd slot={slot} />}
+          />
         ) : (
           <HouseAd slot={slot} />
         )}
