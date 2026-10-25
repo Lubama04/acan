@@ -1,0 +1,11 @@
+title = "acan gitleaks config"
+
+[extend]
+useDefault = true
+
+# The Supabase publishable key is public by design (RLS protects data); it is not committed anyway.
+[allowlist]
+description = "Test fixtures"
+paths = [
+  '''supabase/tests/.*''',
+]

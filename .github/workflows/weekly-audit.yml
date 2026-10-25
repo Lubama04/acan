@@ -1,0 +1,41 @@
+# SILS phase 9 — weekly dependency watch. Opens (or updates) an issue when high/critical
+# vulnerabilities are found, so they show up next to the PRs. Read-only on the code.
+name: Weekly dependency audit
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --ignore-scripts
+      - id: audit
+        run: |
+          npm audit --json > audit.json || true
+          node -e '
+            const a = require("./audit.json").metadata?.vulnerabilities ?? {};
+            const n = (a.high ?? 0) + (a.critical ?? 0);
+            require("fs").appendFileSync(process.env.GITHUB_OUTPUT, `count=${n}\nsummary=critical: ${a.critical ?? 0}, high: ${a.high ?? 0}\n`);
+          '
+      - if: steps.audit.outputs.count != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = "Vulnérabilités de dépendances (audit hebdomadaire)";
+            const body = `npm audit : ${{ steps.audit.outputs.summary }}.\n\nLancer \`npm audit\` localement et appliquer les mises à jour proposées par Dependabot.`;
+            const { data: issues } = await github.rest.issues.listForRepo({ ...context.repo, state: "open", labels: "security" });
+            const existing = issues.find((i) => i.title === title);
+            if (existing) await github.rest.issues.createComment({ ...context.repo, issue_number: existing.number, body });
+            else await github.rest.issues.create({ ...context.repo, title, body, labels: ["security"] });

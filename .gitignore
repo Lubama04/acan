@@ -54,3 +54,4 @@ supabase/.branches/
 # internal source material (not published: public repo)
 /Image/
 *.docx
+.claude/
