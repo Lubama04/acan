@@ -1,6 +1,11 @@
 // Static site configuration. Editable business data lives in Supabase (site_settings).
 
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+// Production sets NEXT_PUBLIC_SITE_URL (real domain). Previews fall back to the deployment URL that
+// Vercel provides, so canonical and share URLs never point to localhost.
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
+).replace(/\/$/, "");
 
 export const LOCALES = {
   fr: { label: "Français", dir: "ltr", enabled: true },
