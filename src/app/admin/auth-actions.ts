@@ -17,17 +17,23 @@ const loginSchema = z.object({
 });
 
 /** Optional per-IP throttle for the login form (requires the service role). */
-async function loginAllowed(ipHash: string) {
+/**
+ * Per-IP throttle for login and MFA (service role). Without the key, only Supabase Auth's own limits
+ * and the Vercel Firewall rule apply (documented). If the counter errors, fail closed in production.
+ */
+async function attemptAllowed(bucket: "login" | "mfa", ipHash: string, max: number) {
   const db = getServiceClient();
   if (!db) return true;
   const { data, error } = await db.rpc("consume_rate_limit", {
-    p_bucket: "login",
+    p_bucket: bucket,
     p_key_hash: ipHash,
-    p_max: 10,
+    p_max: max,
     p_window_seconds: 900,
   });
-  return error ? true : data !== false;
+  if (error) return process.env.NODE_ENV !== "production";
+  return data !== false;
 }
+const loginAllowed = (ipHash: string) => attemptAllowed("login", ipHash, 10);
 
 export async function signIn(_prev: AuthState, formData: FormData): Promise<AuthState> {
   const ctx = await requestContext();
@@ -100,6 +106,19 @@ const codeSchema = z.object({ factorId: z.string().uuid(), code: z.string().rege
 
 export async function verifyMfa(_prev: AuthState, formData: FormData): Promise<AuthState> {
   const ctx = await requestContext();
+  if (!(await attemptAllowed("mfa", ctx.ipHash, 10))) {
+    await logSecurityEvent({
+      type: "rate_limited",
+      severity: "medium",
+      ipHash: ctx.ipHash,
+      userAgent: ctx.userAgent,
+      endpoint: "/admin/mfa",
+    });
+    return {
+      error: "Trop de tentatives. Réessayez dans quinze minutes.",
+      factorId: String(formData.get("factorId") ?? ""),
+    };
+  }
   const parsed = codeSchema.safeParse({ factorId: formData.get("factorId"), code: formData.get("code") });
   if (!parsed.success)
     return {

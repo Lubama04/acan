@@ -87,4 +87,5 @@ export type AdCampaign = {
   target_url: string;
   starts_at: string;
   ends_at: string;
+  max_impressions: number | null;
 };

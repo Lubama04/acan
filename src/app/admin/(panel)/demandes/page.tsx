@@ -84,7 +84,7 @@ export default async function RequestsPage() {
                 <dl className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[10rem_1fr]">
                   <dt className="font-semibold">E-mail</dt>
                   <dd>
-                    <a className="link" href={`mailto:${l.email}`}>
+                    <a className="link" href={`mailto:${encodeURIComponent(l.email)}`}>
                       {l.email}
                     </a>
                   </dd>
@@ -154,7 +154,7 @@ export default async function RequestsPage() {
                   </span>
                 </summary>
                 <p className="mt-3 text-sm">
-                  <a className="link" href={`mailto:${m.email}`}>
+                  <a className="link" href={`mailto:${encodeURIComponent(m.email)}`}>
                     {m.email}
                   </a>
                   {m.phone ? ` · ${m.phone}` : ""}

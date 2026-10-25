@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { PageHero } from "@/components/content/page-hero";
 import { ContactForm } from "@/components/forms/contact-form";
+import { issueFormToken } from "@/lib/security/tokens";
 import { CONTACT_TOPICS } from "@/lib/site";
 import { getSettings } from "@/lib/settings";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "Contact",
+  title: "Contacter l'agence à N'Djamena",
   description: "Contacter Africa Média, agence de communication à N'Djamena : formulaire, WhatsApp, e-mail.",
   path: "/contact",
 });
@@ -34,7 +35,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
       />
       <div className="container-site grid gap-12 py-12 lg:grid-cols-[1.3fr_1fr]">
         <section aria-label="Formulaire de contact" className="max-w-2xl">
-          <ContactForm defaultTopic={topic} />
+          <ContactForm defaultTopic={topic} formToken={issueFormToken()} />
         </section>
         <aside aria-labelledby="coordonnees-title" className="space-y-6">
           <h2 id="coordonnees-title" className="h3 text-navy">
@@ -42,7 +43,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
           </h2>
           <dl className="space-y-4">
             <div>
-              <dt className="font-semibold">Ville</dt>
+              <dt className="font-semibold">Adresse</dt>
               <dd className="text-slate">
                 {s.address ? `${s.address}, ` : ""}
                 {s.city}, {s.country}
@@ -86,8 +87,8 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
           </dl>
           {!s.phone && !s.email && (
             <p className="notice text-sm">
-              Le téléphone et l&apos;adresse e-mail de l&apos;agence seront publiés ici prochainement. Le
-              formulaire est opérationnel.
+              Le téléphone et l&apos;adresse e-mail de l&apos;agence seront publiés ici prochainement. En
+              attendant, le formulaire ci-contre nous parvient directement.
             </p>
           )}
         </aside>

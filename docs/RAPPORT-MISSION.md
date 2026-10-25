@@ -33,9 +33,18 @@ https://acan-q1o42pwk7-flaugust-dev.vercel.app (protégé par SSO Vercel).
   - SEO 100 avec l'indexation activée, 69 sans indexation (volontaire hors production).
 - Documentation : `docs/decisions.md`, `docs/a-completer.md`, `docs/architecture.md`, `docs/securite.md`.
 
+## Relecture indépendante (25/10/2026)
+- Faite par deux relecteurs distincts (sécurité ; design, accessibilité, SEO, contenu). Détail : `docs/revue-independante.md`.
+- Sécurité : aucun défaut critique ; 6 défauts confirmés (1 élevé, 3 moyens, 2 faibles), tous corrigés et testés.
+  Le plus grave permettait de bloquer durablement les formulaires par insertion directe via l'API : chaque
+  insertion publique exige désormais une preuve serveur vérifiée par la base.
+- Contenu : formulations engageantes corrigées (« SARL en cours d'immatriculation », délais, consentement,
+  confidentialité, transferts de données) ; accessibilité (focus, menu mobile, aria, RTL, cibles tactiles) ;
+  SEO (titres, Journal vide en noindex, image de partage absente : corrigée et vérifiée).
+- Après corrections : 34 tests unitaires, 64 tests de bout en bout + 4 scénarios d'écriture en base, tests RLS
+  étendus : tous réussis. Mes lignes de test ont été supprimées de la base.
+
 ## Non terminé
-- La relecture indépendante (sécurité, puis design/SEO/contenu) a été lancée puis interrompue par la limite d'usage :
-  **elle n'a donc pas eu lieu.**
 - Le README n'est pas mis à jour avec les nouvelles variables : voir `docs/architecture.md`.
 - Tests SILS n° 3 et 4 non exécutés de bout en bout : il faut la clé service, un compte admin et Resend.
 
@@ -63,7 +72,7 @@ Voir `docs/a-completer.md` :
 2. Créer le compte admin et activer la MFA.
 3. Relire puis publier les 3 brouillons du journal.
 4. Désactiver l'inscription publique dans Supabase Auth et fixer 12 caractères minimum.
-5. Lancer la relecture indépendante.
+5. Renseigner le responsable de la publication et faire vérifier la question ANSICE (transferts hors CEMAC/CEEAC).
 6. Acheter le domaine, puis le relier à Vercel.
 7. Activer l'indexation en production et déclarer le site dans Search Console et Bing Webmaster.
 8. Saisir RCCM et NIF dès réception.

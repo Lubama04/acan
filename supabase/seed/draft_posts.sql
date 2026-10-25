@@ -106,6 +106,6 @@ Deux publications de qualité par semaine valent mieux qu'une par jour pendant u
 
 Chaque mois : combien de personnes ont vu vos publications, lesquelles ont suscité des réactions ou des messages, et ce que vous changez le mois suivant. Les chiffres de « J'aime » seuls ne disent pas si votre message est passé.
 
-Source : DataReportal, *Digital 2026: Chad* (datareportal.com/reports/digital-2026-chad).$md$,
+Source : DataReportal, [*Digital 2026: Chad*](https://datareportal.com/reports/digital-2026-chad). Chiffres à vérifier à la date de publication.$md$,
   'conseils', 'draft', 'Africa Média'
 );

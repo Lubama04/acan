@@ -90,7 +90,7 @@
     text-wrap: pretty;
   }
   :focus-visible {
-    outline: 3px solid var(--color-gold);
+    outline: 3px solid var(--color-gold-ink);
     outline-offset: 2px;
   }
   a {
@@ -218,7 +218,7 @@
     color: var(--color-navy);
   }
   .field:focus-visible {
-    outline: 3px solid var(--color-gold);
+    outline: 3px solid var(--color-gold-ink);
     outline-offset: 1px;
     border-color: var(--color-navy);
   }
@@ -302,6 +302,11 @@
     padding-inline-start: 1rem;
     color: var(--color-slate);
   }
+}
+
+/* Focus on dark surfaces: light gold (9.3:1 on navy). */
+.bg-navy :focus-visible {
+  outline-color: var(--color-gold-light);
 }
 
 @media (prefers-reduced-motion: reduce) {

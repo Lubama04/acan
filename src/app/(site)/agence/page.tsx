@@ -3,11 +3,11 @@ import { PageHero } from "@/components/content/page-hero";
 import { CtaBand } from "@/components/sections/cta-band";
 import { SectionHeader } from "@/components/sections/section-header";
 import { getTeam } from "@/lib/content";
-import { getSettings, isRegistered } from "@/lib/settings";
+import { getSettings, isRegistered, legalFormLabel } from "@/lib/settings";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "L'agence",
+  title: "Agence de communication à N'Djamena : qui sommes-nous",
   description:
     "Africa Média est une agence de communication basée à N'Djamena. Sa mission, ses valeurs et sa façon de travailler.",
   path: "/agence",
@@ -20,7 +20,7 @@ const VALUES = [
   },
   {
     title: "Le respect des personnes",
-    text: "Les femmes, les hommes et les enfants que nous photographions ou citons ont donné leur accord. Leur dignité passe avant l'effet visuel.",
+    text: "Nous demandons l'accord des personnes que nous photographions ou citons, et celui d'un parent pour les enfants. Leur dignité passe avant l'effet visuel.",
   },
   {
     title: "La clarté",
@@ -40,8 +40,8 @@ export default async function AgencyPage() {
     <>
       <PageHero
         eyebrow="L'agence"
-        title="Une agence de communication tchadienne, au service de ceux qui agissent"
-        lede="Africa Média accompagne les institutions, les ONG et les entreprises qui ont besoin d'expliquer leur action à des publics variés, au Tchad et au-delà."
+        title="Une agence de communication à N'Djamena, pour les organisations qui doivent expliquer leur action"
+        lede="Africa Média accompagne les institutions, les ONG et les entreprises qui ont besoin d'expliquer leur action à des publics variés."
         crumbs={[{ name: "L'agence", path: "/agence" }]}
       />
 
@@ -126,7 +126,8 @@ export default async function AgencyPage() {
           </h2>
           <p className="notice mt-4 max-w-3xl">
             {settings.legal_name}
-            {settings.legal_form ? ` (${settings.legal_form})` : ""}, {settings.city}, {settings.country}.{" "}
+            {legalFormLabel(settings) ? ` (${legalFormLabel(settings)})` : ""}, {settings.city},{" "}
+            {settings.country}.{" "}
             {isRegistered(settings)
               ? `RCCM ${settings.rccm} · NIF ${settings.nif}.`
               : `Société ${settings.registration_status} : les numéros RCCM et NIF seront publiés ici dès leur délivrance.`}

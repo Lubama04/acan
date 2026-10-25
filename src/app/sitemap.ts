@@ -21,6 +21,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/contenus-sponsorises",
   ];
   if (settings.feature_case_studies) staticPaths.push("/realisations");
+  // The journal index is listed only once it has content (it is noindex while empty).
+  if (posts.length === 0) staticPaths.splice(staticPaths.indexOf("/journal"), 1);
 
   return [
     ...staticPaths.map((p) => ({

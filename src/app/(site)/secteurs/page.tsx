@@ -49,7 +49,7 @@ export default async function SectorsPage() {
                 </h2>
                 <p className="lede mt-3">{s.summary}</p>
                 <p className="border-gold font-heading text-navy mt-5 border-s-4 ps-4 text-lg font-bold">
-                  « {s.key_message} »
+                  {s.key_message}
                 </p>
               </div>
               <div className="bg-paper rounded-lg p-6">

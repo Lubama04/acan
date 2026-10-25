@@ -13,6 +13,7 @@ import {
   quoteSchema,
 } from "@/lib/validation/forms";
 import { getSettings } from "@/lib/settings";
+import { formInsertProof, verifyFormToken } from "@/lib/security/tokens";
 
 export type FormState =
   | { status: "idle" }
@@ -35,16 +36,18 @@ async function guard(kind: Kind, formData: FormData, texts: unknown[]) {
   const spam = antiSpamSchema.safeParse({
     website: formData.get("website") ?? "",
     started_at: formData.get("started_at"),
+    started_sig: formData.get("started_sig") ?? "",
   });
+  const forged = spam.success && !verifyFormToken(spam.data.started_at, spam.data.started_sig);
   const tooFast = spam.success && Date.now() - spam.data.started_at < MIN_FILL_MS;
-  if (!spam.success || tooFast) {
+  if (!spam.success || forged || tooFast) {
     await logSecurityEvent({
       type: "honeypot_triggered",
       severity: "low",
       ipHash: ctx.ipHash,
       userAgent: ctx.userAgent,
       endpoint: `form:${kind}`,
-      summary: { reason: spam.success ? "too_fast" : "honeypot" },
+      summary: { reason: !spam.success ? "honeypot" : forged ? "forged_or_expired_token" : "too_fast" },
     });
     // Pretend success: do not teach bots what triggered the filter.
     return { early: { status: "success", message: "Merci, votre message a bien été envoyé." } as FormState };
@@ -78,9 +81,15 @@ async function insert(
   ipHash: string,
   userAgent: string,
 ) {
+  // Server proof checked by the database (direct Data API inserts without it are refused).
+  const proof = formInsertProof();
+  if (!proof) {
+    console.error("[forms] FORM_SIGNING_SECRET missing: public inserts are disabled");
+    return GENERIC_ERROR;
+  }
   const { error } = await createPublicClient()
     .from(table)
-    .insert({ ...row, ip_hash: ipHash });
+    .insert({ ...row, ip_hash: ipHash, ...proof });
   if (!error) return null;
   if (error.message?.includes("rate_limited")) {
     await logSecurityEvent({

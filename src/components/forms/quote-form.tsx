@@ -10,7 +10,14 @@ import {
   SERVICE_OPTIONS,
   TIMELINE_OPTIONS,
 } from "@/lib/site";
-import { AntiSpamFields, describedBy, Field, FormStatus, keepValuesOnSubmit } from "./form-bits";
+import {
+  AntiSpamFields,
+  describedBy,
+  Field,
+  FormStatus,
+  keepValuesOnSubmit,
+  type FormToken,
+} from "./form-bits";
 
 const STEPS = ["Votre organisation", "Votre besoin", "Cadre du projet", "Vos coordonnées"] as const;
 
@@ -33,9 +40,11 @@ const FIELD_STEP: Record<string, number> = {
 export function QuoteForm({
   packages,
   defaultService,
+  formToken,
 }: {
   packages: { slug: string; name: string }[];
   defaultService?: string;
+  formToken: FormToken;
 }) {
   const [step, setStep] = useState(0);
   const [state, action, pending] = useActionState<FormState, FormData>(
@@ -105,8 +114,8 @@ export function QuoteForm({
       className="relative space-y-6"
       aria-describedby="quote-progress"
     >
-      <AntiSpamFields />
-      <p id="quote-progress" className="text-slate text-sm font-semibold">
+      <AntiSpamFields formToken={formToken} />
+      <p id="quote-progress" aria-live="polite" className="text-slate text-sm font-semibold">
         Étape {step + 1} sur {STEPS.length}
       </p>
       <ol className="grid grid-cols-4 gap-2" aria-hidden="true">
@@ -162,6 +171,7 @@ export function QuoteForm({
             <span className="text-destructive" aria-hidden="true">
               *
             </span>
+            <span className="sr-only"> (obligatoire, au moins un)</span>
           </p>
           <div
             role="group"
@@ -315,6 +325,7 @@ export function QuoteForm({
             <input
               type="checkbox"
               name="consent"
+              aria-required="true"
               className="accent-blue mt-1 size-5 shrink-0"
               aria-invalid={Boolean(errors.consent)}
               aria-describedby={describedBy("consent", errors.consent)}

@@ -22,7 +22,8 @@ export default async function TermsPage() {
       <h2>Contenus</h2>
       <p>
         Les articles du Journal donnent des conseils généraux. Ils ne remplacent pas un avis adapté à votre
-        situation. Nous corrigeons les erreurs qui nous sont signalées et indiquons la date de mise à jour.
+        situation. Nous corrigeons les erreurs avérées qui nous sont signalées et indiquons la date de mise à
+        jour.
       </p>
 
       <h2>Formulaires</h2>

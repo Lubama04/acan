@@ -79,6 +79,8 @@ export const newsletterSchema = z.object({ email, consent }).strict();
 export const antiSpamSchema = z.object({
   website: z.string().max(0).optional().or(z.literal("")),
   started_at: z.coerce.number().int().positive(),
+  // Server-issued token binding started_at to the render time (see lib/security/tokens.ts).
+  started_sig: z.string().max(80),
 });
 export const MIN_FILL_MS = 3000;
 

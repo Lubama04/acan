@@ -56,7 +56,7 @@ export default function SponsoredPolicyPage() {
       <h2>Signaler un problème</h2>
       <p>
         Un contenu vous semble mal signalé ? <Link href="/contact?sujet=publicite">Écrivez-nous</Link> : nous
-        corrigeons rapidement.
+        vérifions et corrigeons si nécessaire.
       </p>
     </LegalPage>
   );

@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { cloneElement, isValidElement, type ReactElement, type ReactNode } from "react";
 import type React from "react";
 
-/** Honeypot (invisible to humans, announced as "leave empty" to screen readers) + start timestamp. */
-export function AntiSpamFields() {
-  // Captured once when the form first renders on the client.
-  const [startedAt] = useState(() => Date.now());
+export type FormToken = { issuedAt: number; token: string };
+
+/**
+ * Honeypot (invisible to humans, announced as "leave empty" to screen readers) + server-signed start
+ * time: bots cannot backdate it to skip the minimum fill time.
+ */
+export function AntiSpamFields({ formToken }: { formToken: FormToken }) {
   return (
     <>
       <div aria-hidden="true" className="absolute -start-[10000px] h-px w-px overflow-hidden">
@@ -15,7 +18,8 @@ export function AntiSpamFields() {
           <input type="text" name="website" tabIndex={-1} autoComplete="off" defaultValue="" />
         </label>
       </div>
-      <input type="hidden" name="started_at" value={startedAt} />
+      <input type="hidden" name="started_at" value={formToken.issuedAt} />
+      <input type="hidden" name="started_sig" value={formToken.token} />
     </>
   );
 }
@@ -48,7 +52,10 @@ export function Field({
           <span className="text-slate font-normal"> (facultatif)</span>
         )}
       </label>
-      {children}
+      {/* The visual asterisk is aria-hidden: announce "required" on the control itself. */}
+      {required && isValidElement(children)
+        ? cloneElement(children as ReactElement<{ "aria-required"?: boolean }>, { "aria-required": true })
+        : children}
       {hint && !error && (
         <p id={`${id}-hint`} className="field-hint">
           {hint}

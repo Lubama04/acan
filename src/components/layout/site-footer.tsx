@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
 import { LEGAL_NAV, MAIN_NAV } from "@/lib/site";
-import { getSettings, isRegistered } from "@/lib/settings";
+import { getSettings, isRegistered, legalFormLabel } from "@/lib/settings";
 import { ConsentSettingsButton } from "@/components/consent/consent-settings-button";
 
 export async function SiteFooter() {
@@ -12,7 +12,7 @@ export async function SiteFooter() {
   );
 
   return (
-    <footer className="bg-navy mt-auto text-white">
+    <footer className="bg-navy mt-auto pb-20 text-white sm:pb-0">
       <div className="container-site grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <Logo variant="white" className="h-10 w-auto" />
@@ -21,13 +21,13 @@ export async function SiteFooter() {
           </p>
           <p className="text-mist mt-4 text-sm">
             {s.legal_name}
-            {s.legal_form ? `, ${s.legal_form}` : ""}
+            {legalFormLabel(s) ? `, ${legalFormLabel(s)}` : ""}
             {isRegistered(s) ? (
               <>
                 {" "}
                 · RCCM {s.rccm} · NIF {s.nif}
               </>
-            ) : (
+            ) : legalFormLabel(s) ? null : (
               <> · {s.registration_status}</>
             )}
           </p>
@@ -35,14 +35,17 @@ export async function SiteFooter() {
             <ul className="mt-4 space-y-1 text-sm">
               {s.phone && (
                 <li>
-                  <a className="underline" href={`tel:${s.phone.replace(/\s/g, "")}`}>
+                  <a
+                    className="inline-flex min-h-11 items-center underline"
+                    href={`tel:${s.phone.replace(/\s/g, "")}`}
+                  >
                     {s.phone}
                   </a>
                 </li>
               )}
               {s.email && (
                 <li>
-                  <a className="underline" href={`mailto:${s.email}`}>
+                  <a className="inline-flex min-h-11 items-center underline" href={`mailto:${s.email}`}>
                     {s.email}
                   </a>
                 </li>
@@ -53,16 +56,22 @@ export async function SiteFooter() {
 
         <nav aria-label="Plan du site">
           <h2 className="text-gold-light text-sm font-bold tracking-wide uppercase">L&apos;agence</h2>
-          <ul className="mt-3 space-y-2">
+          <ul className="mt-3">
             {nav.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="text-white/90 hover:text-white hover:underline">
+                <Link
+                  href={item.href}
+                  className="inline-flex min-h-11 items-center text-white/90 hover:text-white hover:underline"
+                >
                   {item.label}
                 </Link>
               </li>
             ))}
             <li>
-              <Link href="/devis" className="text-white/90 hover:text-white hover:underline">
+              <Link
+                href="/devis"
+                className="inline-flex min-h-11 items-center text-white/90 hover:text-white hover:underline"
+              >
                 Devis et forfaits
               </Link>
             </li>
@@ -71,16 +80,19 @@ export async function SiteFooter() {
 
         <nav aria-label="Informations légales">
           <h2 className="text-gold-light text-sm font-bold tracking-wide uppercase">Informations</h2>
-          <ul className="mt-3 space-y-2">
+          <ul className="mt-3">
             {LEGAL_NAV.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="text-white/90 hover:text-white hover:underline">
+                <Link
+                  href={item.href}
+                  className="inline-flex min-h-11 items-center text-white/90 hover:text-white hover:underline"
+                >
                   {item.label}
                 </Link>
               </li>
             ))}
             <li>
-              <ConsentSettingsButton className="text-left text-white/90 hover:text-white hover:underline" />
+              <ConsentSettingsButton className="min-h-11 text-start text-white/90 hover:text-white hover:underline" />
             </li>
           </ul>
           {socials.length > 0 && (

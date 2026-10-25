@@ -5,12 +5,20 @@ import { PostMeta, SponsoredLabel } from "@/components/content/post-meta";
 import { getPosts } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 
-export const metadata = pageMetadata({
+const META = {
   title: "Journal : conseils et ressources en communication",
   description:
     "Conseils pratiques de communication pour les organisations au Tchad, études de cas et actualités de l'agence Africa Média.",
   path: "/journal",
-});
+};
+
+// An empty journal is kept out of search engines (thin content) until the first article is published.
+export async function generateMetadata() {
+  const posts = await getPosts();
+  return posts.length > 0
+    ? pageMetadata(META)
+    : { ...pageMetadata(META), robots: { index: false, follow: true } };
+}
 
 export default async function JournalPage() {
   const posts = await getPosts();
@@ -32,7 +40,13 @@ export default async function JournalPage() {
       <div className={`container-site grid gap-12 pb-16 lg:grid-cols-[1fr_300px] ${showAds ? "" : "pt-12"}`}>
         <div>
           {posts.length === 0 ? (
-            <p className="lede">Les premiers articles arrivent bientôt.</p>
+            <p className="lede">
+              Aucun article n&apos;est encore publié. En attendant, nos{" "}
+              <Link href="/services" className="link">
+                services
+              </Link>{" "}
+              détaillent notre façon de travailler.
+            </p>
           ) : (
             <ul className="divide-border divide-y">
               {posts.map((p) => (

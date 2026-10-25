@@ -10,7 +10,8 @@ export function Markdown({ children }: { children: string }) {
     <div className="prose-am">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        urlTransform={(url) => (/^(https?:|mailto:|\/|#)/i.test(url) ? url : "")}
+        // Protocol-relative URLs (//evil.example) are rejected: "/" must not be followed by "/".
+        urlTransform={(url) => (/^(https?:|mailto:|\/(?!\/)|#)/i.test(url) ? url : "")}
         components={{
           a: ({ href, children: c }) => {
             const external = href?.startsWith("http");
@@ -20,8 +21,9 @@ export function Markdown({ children }: { children: string }) {
               </a>
             );
           },
-          // eslint-disable-next-line @next/next/no-img-element
           img: ({ src, alt }) => (
+            // Editor images from arbitrary https hosts: plain <img>, lazy-loaded.
+            // eslint-disable-next-line @next/next/no-img-element
             <img src={typeof src === "string" ? src : ""} alt={alt ?? ""} loading="lazy" decoding="async" />
           ),
           h1: ({ children: c }) => <h2>{c}</h2>,

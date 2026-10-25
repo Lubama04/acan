@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { Menu } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { MAIN_NAV } from "@/lib/site";
 import { getSettings } from "@/lib/settings";
+import { DesktopNav, MobileNav } from "./header-nav";
 
-// Server component. The mobile menu uses <details>: it works without JavaScript.
 export async function SiteHeader() {
   const settings = await getSettings();
-  const nav = MAIN_NAV.filter((item) => !item.flag || settings[item.flag]);
+  const nav = MAIN_NAV.filter((item) => !item.flag || settings[item.flag]).map(({ href, label }) => ({
+    href,
+    label,
+  }));
 
   return (
     <header className="border-border border-b bg-white">
@@ -15,56 +17,12 @@ export async function SiteHeader() {
         <Link href="/" className="shrink-0" aria-label="Africa Média, accueil">
           <Logo className="h-9 w-auto md:h-11" />
         </Link>
-
-        <nav aria-label="Navigation principale" className="hidden lg:block">
-          <ul className="flex items-center gap-1">
-            {nav.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="text-navy hover:bg-paper rounded-md px-3 py-2 text-[0.95rem] font-semibold"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
+        <DesktopNav items={nav} />
         <div className="flex items-center gap-2">
           <Link href="/devis" className="btn btn-primary hidden sm:inline-flex">
             Demander un devis
           </Link>
-          <details className="group relative lg:hidden">
-            <summary
-              className="border-border text-navy flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-md border [&::-webkit-details-marker]:hidden"
-              aria-label="Ouvrir le menu"
-            >
-              <Menu aria-hidden="true" className="size-6" />
-            </summary>
-            <nav
-              aria-label="Navigation mobile"
-              className="border-border absolute end-0 top-14 z-50 w-72 rounded-lg border bg-white p-2 shadow-lg"
-            >
-              <ul>
-                {nav.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="text-navy hover:bg-paper block rounded-md px-3 py-3 font-semibold"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-                <li className="border-border mt-2 border-t pt-2">
-                  <Link href="/devis" className="btn btn-primary w-full">
-                    Demander un devis
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-          </details>
+          <MobileNav items={nav} />
         </div>
       </div>
     </header>

@@ -83,3 +83,23 @@ Each entry: decision, alternatives considered, reason. Newest last.
 ## D18 — Repository left public
 - **Reason:** no answer received on visibility; secrets are not in Git and push protection is on. The segmentation
   document is strategic: making the repository private is recommended (owner's decision).
+
+## D19 — Public form inserts carry a server proof checked by the database (review finding 1)
+- **Alternatives:** (a) service-role-only inserts — blocked until `SUPABASE_SECRET_KEY` is provided;
+  (b) HMAC computed in SQL with a shared secret — would require placing the secret in the database
+  through the agent's transcript (refused by the tooling, rightly).
+- **Choice:** the website server sends `FORM_SIGNING_SECRET` (Vercel, sensitive) with each insert; the
+  database stores only its SHA-256 fingerprint (`private.app_secrets`, not exposed, not in Git) and a trigger
+  refuses anonymous inserts without it, then forces every server-controlled column. Direct Data API calls can
+  no longer forge dates, IP hashes or enumerate newsletter addresses. Trusted roles (service role, owner) skip
+  the proof but still get forced columns.
+- **Rotation:** new secret on Vercel + update the fingerprint row, in the same deployment window.
+
+## D20 — Ad events require a render token and same-origin navigation (review finding 3)
+- **Reason:** the session cookie alone could be skipped by scripts; clicks could be farmed with `<img>` on other
+  sites. Tokens are HMAC-bound to the campaign (30 min), clicks need `Sec-Fetch-Site: same-origin`, invalid
+  events are stored flagged (`invalid_token`) and never billed; per-IP caps and a storage flood guard apply.
+
+## D21 — Wording: nothing that commits the company before it exists
+- "SARL" is shown as "SARL en cours d'immatriculation" until RCCM and NIF are set; delivery promises are tied
+  to the quote; consent and confidentiality claims are realistic (see docs/revue-independante.md).

@@ -9,6 +9,7 @@ export function pageMetadata({
   path,
   type = "website",
   absoluteTitle = false,
+  image,
 }: {
   title: string;
   description: string;
@@ -16,8 +17,18 @@ export function pageMetadata({
   type?: "website" | "article";
   /** Skip the "· Africa Média" template suffix (home page). */
   absoluteTitle?: boolean;
+  /** Share image; defaults to the site OG image (a page-level openGraph block replaces the file convention). */
+  image?: { url: string; alt: string } | null;
 }): Metadata {
   const url = `${SITE_URL}${path === "/" ? "" : path}`;
+  const shareImage = image
+    ? { url: image.url, alt: image.alt }
+    : {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Africa Média, agence de communication à N'Djamena",
+      };
   return {
     title: absoluteTitle ? { absolute: title } : title,
     description,
@@ -26,8 +37,16 @@ export function pageMetadata({
       // Only French exists today; ar/en will be added under /ar and /en.
       languages: { "fr-TD": url, "x-default": url },
     },
-    openGraph: { title, description, url, type, locale: "fr_TD", siteName: "Africa Média" },
-    twitter: { card: "summary_large_image", title, description },
+    openGraph: {
+      title,
+      description,
+      url,
+      type,
+      locale: "fr_TD",
+      siteName: "Africa Média",
+      images: [shareImage],
+    },
+    twitter: { card: "summary_large_image", title, description, images: [shareImage.url] },
   };
 }
 

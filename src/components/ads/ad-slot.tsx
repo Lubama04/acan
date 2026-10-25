@@ -4,6 +4,7 @@ import { getSettings } from "@/lib/settings";
 import type { AdSlotKey } from "@/lib/types";
 import { AdSenseUnit } from "./adsense-unit";
 import { ImpressionBeacon } from "./impression-beacon";
+import { issueAdToken } from "@/lib/security/tokens";
 
 // Reserved boxes (no layout shift). Mobile sizes for wide formats; sidebar hidden below lg.
 const BOX: Record<AdSlotKey, string> = {
@@ -47,6 +48,8 @@ export async function AdSlot({ slot, className = "" }: { slot: AdSlotKey; classN
   const adsenseReady = Boolean(clientId && settings.adsense_enabled && config?.adsense_slot_id);
   const label = campaign ? campaign.disclosure : "Publicité";
   const hiddenOnMobile = slot === "sidebar" ? "hidden lg:block" : "";
+  // Render-time token bound to the campaign: impressions/clicks without it are not counted.
+  const adToken = campaign ? issueAdToken(campaign.id) : null;
 
   return (
     <aside aria-label={label} className={`${hiddenOnMobile} ${className}`}>
@@ -56,7 +59,7 @@ export async function AdSlot({ slot, className = "" }: { slot: AdSlotKey; classN
       >
         {campaign ? (
           <a
-            href={`/api/ads/click/${campaign.id}`}
+            href={`/api/ads/click/${campaign.id}?t=${encodeURIComponent(adToken!)}`}
             rel="sponsored noopener"
             target="_blank"
             className="block size-full"
@@ -70,7 +73,7 @@ export async function AdSlot({ slot, className = "" }: { slot: AdSlotKey; classN
               loading="lazy"
               decoding="async"
             />
-            <ImpressionBeacon campaignId={campaign.id} />
+            <ImpressionBeacon campaignId={campaign.id} token={adToken!} />
           </a>
         ) : adsenseReady ? (
           <AdSenseUnit

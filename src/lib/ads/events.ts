@@ -25,46 +25,89 @@ async function sessionHash() {
   return hashValue(`sid:${sid}`);
 }
 
-export async function recordAdEvent(campaignId: string, type: "impression" | "click") {
+export type AdEventContext = {
+  /** Server-issued render token for this campaign was present and valid. */
+  validToken: boolean;
+  /** Click only: the browser reported a same-origin navigation (Sec-Fetch-Site). */
+  sameSiteNavigation?: boolean;
+};
+
+export async function recordAdEvent(campaignId: string, type: "impression" | "click", evt: AdEventContext) {
   const db = getServiceClient();
   if (!db) return; // Counting requires SUPABASE_SECRET_KEY (server-side writes only).
 
   const ctx = await requestContext();
+
+  // Flood guard: past this volume from one IP, nothing is stored (the table cannot be flooded).
+  const { data: allowed, error: rlError } = await db.rpc("consume_rate_limit", {
+    p_bucket: type === "click" ? "ad_click" : "ad_impression",
+    p_key_hash: ctx.ipHash,
+    p_max: LIMITS.storedEventsPerIpPerHour,
+    p_window_seconds: 3600,
+  });
+  if (rlError || allowed === false) return;
+
   const session = await sessionHash();
   const isBot = isLikelyBot(ctx.userAgent);
   const now = Date.now();
+  const since = (ms: number) => new Date(now - ms).toISOString();
+  const count = (q: PromiseLike<{ count: number | null }>) => Promise.resolve(q).then((r) => r.count ?? 0);
 
   let flag;
   if (type === "impression") {
-    const { count } = await db
-      .from("ad_events")
-      .select("id", { count: "exact", head: true })
-      .eq("campaign_id", campaignId)
-      .eq("event_type", "impression")
-      .eq("session_hash", session)
-      .eq("flagged", false)
-      .gte("created_at", new Date(now - LIMITS.impressionWindowMs).toISOString());
-    flag = classifyImpression({ isBot, sameSessionRecent: count ?? 0 });
+    const [sameSession, ipImpressions] = await Promise.all([
+      count(
+        db
+          .from("ad_events")
+          .select("id", { count: "exact", head: true })
+          .eq("campaign_id", campaignId)
+          .eq("event_type", "impression")
+          .eq("session_hash", session)
+          .eq("flagged", false)
+          .gte("created_at", since(LIMITS.impressionWindowMs)),
+      ),
+      count(
+        db
+          .from("ad_events")
+          .select("id", { count: "exact", head: true })
+          .eq("event_type", "impression")
+          .eq("ip_hash", ctx.ipHash)
+          .eq("flagged", false)
+          .gte("created_at", since(3_600_000)),
+      ),
+    ]);
+    flag = classifyImpression({
+      isBot,
+      validToken: evt.validToken,
+      sameSessionRecent: sameSession,
+      ipImpressionsLastHour: ipImpressions,
+    });
   } else {
     const [sessionClicks, ipClicks] = await Promise.all([
-      db
-        .from("ad_events")
-        .select("id", { count: "exact", head: true })
-        .eq("campaign_id", campaignId)
-        .eq("event_type", "click")
-        .eq("session_hash", session)
-        .gte("created_at", new Date(now - 86_400_000).toISOString()),
-      db
-        .from("ad_events")
-        .select("id", { count: "exact", head: true })
-        .eq("event_type", "click")
-        .eq("ip_hash", ctx.ipHash)
-        .gte("created_at", new Date(now - 3_600_000).toISOString()),
+      count(
+        db
+          .from("ad_events")
+          .select("id", { count: "exact", head: true })
+          .eq("campaign_id", campaignId)
+          .eq("event_type", "click")
+          .eq("session_hash", session)
+          .gte("created_at", since(86_400_000)),
+      ),
+      count(
+        db
+          .from("ad_events")
+          .select("id", { count: "exact", head: true })
+          .eq("event_type", "click")
+          .eq("ip_hash", ctx.ipHash)
+          .gte("created_at", since(3_600_000)),
+      ),
     ]);
     flag = classifyClick({
       isBot,
-      sessionClicksToday: sessionClicks.count ?? 0,
-      ipClicksLastHour: ipClicks.count ?? 0,
+      validToken: evt.validToken,
+      sameSiteNavigation: Boolean(evt.sameSiteNavigation),
+      sessionClicksToday: sessionClicks,
+      ipClicksLastHour: ipClicks,
     });
   }
 
@@ -78,7 +121,7 @@ export async function recordAdEvent(campaignId: string, type: "impression" | "cl
   });
   if (error) console.error("[ads] event insert failed", error.code);
 
-  if (type === "click" && (flag === "ip_cap" || flag === "repeat_click")) {
+  if (type === "click" && (flag === "ip_cap" || flag === "repeat_click" || flag === "invalid_token")) {
     await logSecurityEvent({
       type: "ad_fraud_suspected",
       severity: "low",

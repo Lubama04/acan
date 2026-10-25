@@ -85,6 +85,15 @@ const loadSettings = unstable_cache(
 
 export const getSettings = cache(loadSettings);
 
+/**
+ * Legal form as it may be displayed: until RCCM and NIF exist, the company is not constituted yet,
+ * so "SARL" alone would be misleading.
+ */
+export function legalFormLabel(s: Pick<SiteSettings, "legal_form" | "rccm" | "nif">) {
+  if (!s.legal_form) return null;
+  return isRegistered(s) ? s.legal_form : `${s.legal_form} en cours d'immatriculation`;
+}
+
 /** True when both legal identifiers are known; otherwise the site must say « en cours d'immatriculation ». */
 export function isRegistered(s: Pick<SiteSettings, "rccm" | "nif">) {
   return Boolean(s.rccm && s.nif);

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { LegalPage } from "@/components/content/legal-page";
-import { getSettings, isRegistered } from "@/lib/settings";
+import { getSettings, isRegistered, legalFormLabel } from "@/lib/settings";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -16,7 +16,7 @@ export default async function LegalNoticePage() {
       <h2>Éditeur du site</h2>
       <p>
         {s.legal_name}
-        {s.legal_form ? `, ${s.legal_form}` : ""}
+        {legalFormLabel(s) ? `, ${legalFormLabel(s)}` : ""}
         {s.share_capital ? ` au capital de ${s.share_capital}` : ""}.
         <br />
         {isRegistered(s) ? (
@@ -42,7 +42,10 @@ export default async function LegalNoticePage() {
         )}
         {s.phone ? ` · ${s.phone}` : ""}.
       </p>
-      <p>Responsable de la publication : {s.publication_director ?? "le gérant de la société"}.</p>
+      <p>
+        Responsable de la publication :{" "}
+        {s.publication_director ?? "le promoteur du projet (nom publié prochainement)"}.
+      </p>
 
       <h2>Hébergement</h2>
       <p>

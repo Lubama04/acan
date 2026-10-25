@@ -18,6 +18,7 @@ export async function generateMetadata({ params }: PageProps<"/journal/[slug]">)
     description: post.seo_description ?? post.excerpt,
     path: `/journal/${post.slug}`,
     type: "article",
+    image: post.cover_url ? { url: post.cover_url, alt: post.cover_alt ?? post.title } : null,
   });
 }
 

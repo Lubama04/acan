@@ -134,7 +134,13 @@ dans une transaction annulée ; aucune trace en base vérifiée ensuite).
 
 Le forfait Hobby n'inclut pas la protection anti-bot managée ni les ensembles OWASP gérés : non activés.
 
-## 15. Risques résiduels
+## 15. Relecture indépendante (25/10/2026)
+
+Six défauts confirmés (1 élevé, 3 moyens, 2 faibles) et cinq durcissements : tous corrigés, sauf la
+désactivation de l'inscription publique en production (tableau de bord Supabase, à faire). Détail et preuves :
+`docs/revue-independante.md`.
+
+## 16. Risques résiduels
 
 | Risque | Gravité | Mesure recommandée |
 | --- | --- | --- |
@@ -143,6 +149,6 @@ Le forfait Hobby n'inclut pas la protection anti-bot managée ni les ensembles O
 | Inscription Supabase Auth ouverte par défaut (un inscrit n'a aucun droit, mais peut créer des comptes) | Faible | Désactiver l'inscription publique |
 | Transferts de données hors CEMAC/CEEAC (Vercel, Supabase) | Juridique | Validation par un juriste ; mention déjà présente dans la politique |
 | Pas de WAF managé ni d'anti-bot (forfait Hobby) | Moyenne | Passer en Pro ou ajouter Cloudflare devant le domaine |
-| Insertions anonymes directes via l'API (contournant le site) limitées par les triggers mais pas par le honeypot | Faible | Passer les formulaires en insertion service role une fois la clé disponible (décision D7) |
+| Insertions anonymes directes via l'API | **Corrigé le 25/10** | Preuve serveur exigée par la base (décision D19, docs/revue-independante.md) |
 | Pas de verrouillage de compte ni de révocation automatique des sessions | Faible | À ajouter si un incident le justifie |
 | Dépôt GitHub public (document de segmentation visible) | Faible (stratégique) | Passer le dépôt en privé |

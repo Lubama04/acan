@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react";
  * Requires JavaScript and a real viewport, which already filters most crawlers; the server
  * applies bot and per-session filtering on top.
  */
-export function ImpressionBeacon({ campaignId }: { campaignId: string }) {
+export function ImpressionBeacon({ campaignId, token }: { campaignId: string; token: string }) {
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export function ImpressionBeacon({ campaignId }: { campaignId: string }) {
       ([entry]) => {
         if (entry?.isIntersecting) {
           timer = setTimeout(() => {
-            const body = JSON.stringify({ campaignId });
+            const body = JSON.stringify({ campaignId, token });
             // text/plain keeps the beacon a "simple" request (no CORS preflight); the server parses JSON.
             if (!navigator.sendBeacon?.("/api/ads/impression", new Blob([body], { type: "text/plain" }))) {
               void fetch("/api/ads/impression", { method: "POST", body, keepalive: true });
@@ -36,7 +36,7 @@ export function ImpressionBeacon({ campaignId }: { campaignId: string }) {
       observer.disconnect();
       if (timer) clearTimeout(timer);
     };
-  }, [campaignId]);
+  }, [campaignId, token]);
 
   return <span ref={ref} hidden />;
 }

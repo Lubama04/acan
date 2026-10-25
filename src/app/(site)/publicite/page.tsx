@@ -14,7 +14,7 @@ export const metadata = pageMetadata({
 const PLACEMENT_HELP: Record<string, string> = {
   header: "En haut des pages du Journal.",
   in_article: "Au milieu des articles longs du Journal.",
-  sidebar: "À droite des articles, sur ordinateur uniquement.",
+  sidebar: "À côté des articles, sur ordinateur uniquement.",
   footer: "En bas des pages du Journal.",
 };
 
@@ -33,7 +33,7 @@ export default async function AdvertisingPage() {
         <div>
           <h2 className="h2 text-navy">Formats disponibles</h2>
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full min-w-[480px] text-left">
+            <table className="w-full min-w-[480px] text-start">
               <caption className="sr-only">Emplacements publicitaires</caption>
               <thead>
                 <tr className="border-navy border-b-2 text-sm">

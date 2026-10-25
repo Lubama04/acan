@@ -95,8 +95,8 @@ export default async function PrivacyPage() {
         </table>
       </div>
       <p>
-        Nous ne stockons jamais votre adresse IP en clair. Nous ne vendons aucune donnée et n&apos;utilisons
-        pas vos coordonnées pour de la prospection sans votre accord.
+        Nous ne conservons pas votre adresse IP en clair dans notre base de données. Nous ne vendons aucune
+        donnée et n&apos;utilisons pas vos coordonnées pour de la prospection sans votre accord.
       </p>
 
       <h2>Base légale</h2>
@@ -111,8 +111,8 @@ export default async function PrivacyPage() {
         authentification à deux facteurs. Elles sont hébergées par nos prestataires techniques : Supabase
         (base de données, serveurs situés en France) et Vercel (hébergement du site, société établie aux
         États-Unis). Ces pays ne font pas partie de la CEMAC ni de la CEEAC. Ces prestataires appliquent des
-        engagements contractuels de sécurité et de confidentialité ; en nous transmettant vos données, vous
-        acceptez ce transfert, que nous limitons au strict nécessaire.
+        engagements contractuels de sécurité et de confidentialité, et nous limitons ce transfert au strict
+        nécessaire.
       </p>
       <p>
         Si vous acceptez la publicité Google, Google peut déposer ses propres cookies : voir la{" "}

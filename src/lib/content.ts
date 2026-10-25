@@ -1,6 +1,7 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
 import { createPublicClient } from "@/lib/supabase/public";
+import { getServiceClient } from "@/lib/supabase/admin";
 import type {
   AdCampaign,
   AdSlotKey,
@@ -114,7 +115,9 @@ export const getActiveCampaigns = unstable_cache(
   async (): Promise<AdCampaign[]> => {
     const { data, error } = await createPublicClient()
       .from("ad_campaigns")
-      .select("id, slot_key, advertiser, disclosure, image_url, image_alt, target_url, starts_at, ends_at");
+      .select(
+        "id, slot_key, advertiser, disclosure, image_url, image_alt, target_url, starts_at, ends_at, max_impressions",
+      );
     logError("ad_campaigns", error);
     return (data as AdCampaign[]) ?? [];
   },
@@ -122,10 +125,50 @@ export const getActiveCampaigns = unstable_cache(
   { revalidate: 60, tags: ["ads"] },
 );
 
+/**
+ * Campaigns that reached their `max_impressions` (unflagged impressions). Needs the service role to
+ * read ad_events; without it nothing is counted, so nothing can be capped either.
+ */
+const getCappedCampaignIds = unstable_cache(
+  async (): Promise<string[]> => {
+    const db = getServiceClient();
+    if (!db) return [];
+    const capped = (await getActiveCampaigns()).filter((c) => c.max_impressions);
+    const results = await Promise.all(
+      capped.map(async (c) => {
+        const { count } = await db
+          .from("ad_events")
+          .select("id", { count: "exact", head: true })
+          .eq("campaign_id", c.id)
+          .eq("event_type", "impression")
+          .eq("flagged", false);
+        return (count ?? 0) >= (c.max_impressions ?? Infinity) ? c.id : null;
+      }),
+    );
+    return results.filter((id): id is string => id !== null);
+  },
+  ["ad-capped"],
+  { revalidate: 60, tags: ["ads"] },
+);
+
+/** A campaign that can be served (and counted) right now: active, in its dates, under its cap. */
+export async function getServableCampaign(id: string): Promise<AdCampaign | null> {
+  const now = Date.now();
+  const [list, capped] = await Promise.all([getActiveCampaigns(), getCappedCampaignIds()]);
+  const c = list.find((x) => x.id === id);
+  if (!c || capped.includes(c.id)) return null;
+  return Date.parse(c.starts_at) <= now && Date.parse(c.ends_at) > now ? c : null;
+}
+
 export async function getCampaignForSlot(slot: AdSlotKey): Promise<AdCampaign | null> {
   const now = Date.now();
-  const list = (await getActiveCampaigns()).filter(
-    (c) => c.slot_key === slot && Date.parse(c.starts_at) <= now && Date.parse(c.ends_at) > now,
+  const [all, capped] = await Promise.all([getActiveCampaigns(), getCappedCampaignIds()]);
+  const list = all.filter(
+    (c) =>
+      c.slot_key === slot &&
+      !capped.includes(c.id) &&
+      Date.parse(c.starts_at) <= now &&
+      Date.parse(c.ends_at) > now,
   );
   if (list.length === 0) return null;
   // Simple rotation by minute so concurrent campaigns share the slot.

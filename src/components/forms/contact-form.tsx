@@ -4,9 +4,16 @@ import { startTransition, useActionState } from "react";
 import Link from "next/link";
 import { submitContact, type FormState } from "@/app/actions/forms";
 import { CONTACT_TOPICS } from "@/lib/site";
-import { AntiSpamFields, describedBy, Field, FormStatus, keepValuesOnSubmit } from "./form-bits";
+import {
+  AntiSpamFields,
+  describedBy,
+  Field,
+  FormStatus,
+  keepValuesOnSubmit,
+  type FormToken,
+} from "./form-bits";
 
-export function ContactForm({ defaultTopic }: { defaultTopic?: string }) {
+export function ContactForm({ defaultTopic, formToken }: { defaultTopic?: string; formToken: FormToken }) {
   const [state, action, pending] = useActionState<FormState, FormData>(submitContact, { status: "idle" });
   const errors = state.status === "error" ? (state.fields ?? {}) : {};
 
@@ -14,7 +21,7 @@ export function ContactForm({ defaultTopic }: { defaultTopic?: string }) {
 
   return (
     <form onSubmit={keepValuesOnSubmit(action, startTransition)} noValidate className="relative space-y-5">
-      <AntiSpamFields />
+      <AntiSpamFields formToken={formToken} />
       <FormStatus state={state} />
       <Field id="c-name" label="Nom et prénom" required error={errors.full_name}>
         <input
@@ -78,6 +85,7 @@ export function ContactForm({ defaultTopic }: { defaultTopic?: string }) {
           <input
             type="checkbox"
             name="consent"
+            aria-required="true"
             className="accent-blue mt-1 size-5 shrink-0"
             aria-invalid={Boolean(errors.consent)}
             aria-describedby={describedBy("c-consent", errors.consent)}

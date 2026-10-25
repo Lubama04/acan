@@ -26,6 +26,16 @@ values ('Test Lead', 'lead@example.org', 'ong', array['relations-presse'], 'Mess
 
 insert into public.security_events (event_type, severity) values ('other', 'info');
 
+-- Server-controlled columns are forced even for trusted inserts (created_at cannot be backdated/forward-dated).
+insert into public.contact_messages (full_name, email, topic, message, consent, ip_hash, created_at, status)
+values ('Horodatage', 'ts@example.org', 'question', 'Test de date forcée.', true, repeat('f', 64), '2099-01-01', 'archived');
+do $$
+begin
+  if exists (select 1 from public.contact_messages where email = 'ts@example.org' and (created_at > now() + interval '1 minute' or status <> 'new')) then
+    raise exception 'FAIL: created_at/status not forced by trigger';
+  end if;
+end $$;
+
 -- ---------- Structural: no table without RLS ----------
 do $$
 begin
@@ -48,11 +58,22 @@ begin
   if exists (select 1 from public.security_events) then raise exception 'FAIL anon: reads security_events'; end if;
   if exists (select 1 from public.site_settings where not is_public) then raise exception 'FAIL anon: reads private settings'; end if;
 
-  -- Insert-only forms: a valid lead is accepted …
-  insert into public.leads (full_name, email, segment, services, message, consent, ip_hash)
-  values ('Visiteur', 'v@example.org', 'entreprise', array['gestion-reseaux-sociaux'], 'Bonjour, nous voudrions un devis.', true, repeat('b', 64));
+  -- Direct Data API inserts without the website's proof are refused (review finding 1) …
+  begin
+    insert into public.leads (full_name, email, segment, services, message, consent, ip_hash, form_ts, form_sig)
+    values ('Visiteur', 'v@example.org', 'entreprise', array['gestion-reseaux-sociaux'], 'Bonjour, nous voudrions un devis.', true, repeat('b', 64),
+            extract(epoch from now())::bigint, 'forged-secret-value');
+    raise exception 'FAIL anon: lead with a forged proof accepted';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    insert into public.newsletter_subscribers (email, ip_hash, form_ts, form_sig)
+    values ('enum@example.org', repeat('e', 64), extract(epoch from now())::bigint, 'x');
+    raise exception 'FAIL anon: newsletter insert without proof accepted (enumeration)';
+  exception when insufficient_privilege then null;
+  end;
 
-  -- … but forging server-controlled fields is rejected.
+  -- … and forging server-controlled fields is rejected.
   begin
     insert into public.leads (full_name, email, segment, services, message, consent, ip_hash, status)
     values ('Visiteur', 'v@example.org', 'entreprise', array['x'], 'Bonjour, nous voudrions un devis.', true, repeat('c', 64), 'won');
@@ -62,7 +83,7 @@ begin
   begin
     insert into public.leads (full_name, email, segment, services, message, consent)
     values ('Visiteur', 'v@example.org', 'entreprise', array['x'], 'Bonjour, nous voudrions un devis.', true);
-    raise exception 'FAIL anon: lead without ip_hash accepted';
+    raise exception 'FAIL anon: lead without ip_hash/proof accepted';
   exception when insufficient_privilege then null;
   end;
   begin

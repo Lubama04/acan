@@ -36,7 +36,7 @@ export default function CookiesPage() {
               <td>am_ad_sid</td>
               <td>
                 Compter une seule fois l&apos;affichage d&apos;une publicité sponsorisée et écarter les clics
-                frauduleux. Identifiant aléatoire, sans donnée personnelle.
+                frauduleux. Identifiant aléatoire, non relié à votre identité.
               </td>
               <td>30 minutes</td>
               <td>Non (mesure et lutte contre la fraude)</td>

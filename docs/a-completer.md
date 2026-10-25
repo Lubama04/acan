@@ -11,7 +11,8 @@ Tout se saisit dans **/admin/parametres** (sauf mention contraire) : aucune modi
 | 2 | **E-mail du premier administrateur** | Me le communiquer, ou exécuter le SQL du § 5 | Personne ne peut accéder à /admin |
 | 3 | **Nom de domaine** (achat + DNS) | Votre décision ; je ne l'achète pas | Pas d'indexation (le site est en `noindex`), pas d'AdSense, pas d'e-mails professionnels |
 | 4 | **Variables de production** : `NEXT_PUBLIC_SITE_URL=https://votre-domaine`, `NEXT_PUBLIC_ALLOW_INDEXING=true` | Vercel → Production uniquement | Le site reste invisible des moteurs de recherche |
-| 5 | **Validation juridique** de la politique de confidentialité et des CGU | Juriste au Tchad (loi 007/PR/2015, ANSICE, transferts hors CEMAC/CEEAC) | Textes prudents mais non validés |
+| 5 | **Validation juridique** de la politique de confidentialité et des CGU, y compris la nécessité d'une **déclaration ou autorisation ANSICE** pour les transferts hors CEMAC/CEEAC (Vercel, Supabase) | Juriste au Tchad (loi 007/PR/2015) | Textes prudents mais non validés |
+| 6 | **Nom du responsable de la publication** | /admin/parametres → `publication_director` | Le site affiche « le promoteur du projet (nom publié prochainement) » ; à renseigner avant l'indexation |
 
 ## 2. Identité légale (site_settings)
 

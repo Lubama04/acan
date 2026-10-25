@@ -16,7 +16,7 @@ export const metadata = pageMetadata({
 
 const STEPS = [
   {
-    title: "On se parle",
+    title: "Premier échange",
     text: "Un entretien pour comprendre votre organisation, vos publics et vos contraintes : délais, validation, budget.",
   },
   {
@@ -35,10 +35,10 @@ const STEPS = [
 
 const COMMITMENTS = [
   "Un devis écrit avant tout travail, sans frais cachés.",
-  "Le consentement écrit des personnes photographiées ou filmées.",
+  "L'accord des personnes photographiées en gros plan, et une autorisation écrite pour les témoignages et pour les mineurs (avec l'accord d'un parent).",
   "Les contenus payés ou partenaires sont toujours signalés comme tels.",
   "Aucune promesse de parution dans la presse : nous ne payons pas les journalistes.",
-  "Vos documents et vos données restent confidentiels.",
+  "Vos documents sont traités de façon confidentielle ; un accord de confidentialité peut être signé.",
 ];
 
 export default async function HomePage() {
@@ -56,7 +56,8 @@ export default async function HomePage() {
             </h1>
             <p className="lede mt-5 max-w-2xl">
               Africa Média aide les institutions, les ONG et les entreprises du Tchad à expliquer leur action
-              : textes, images, réseaux sociaux et relations avec la presse.
+              : communication institutionnelle, réseaux sociaux, production photo et vidéo, rédaction et
+              relations presse.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/devis" className="btn btn-primary">
@@ -94,7 +95,10 @@ export default async function HomePage() {
                   </span>
                   <span className="h3 text-navy group-hover:text-blue">{s.title}</span>
                   <span className="text-slate">{s.summary}</span>
-                  <ArrowRight aria-hidden="true" className="text-blue hidden size-5 md:block" />
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="text-blue hidden size-5 md:block rtl:-scale-x-100"
+                  />
                 </Link>
               </li>
             ))}
@@ -167,7 +171,7 @@ export default async function HomePage() {
               Pour une présence régulière, trois formules à adapter. Les prix dépendent du volume et sont
               établis sur devis.
             </p>
-            <table className="mt-5 w-full text-left">
+            <table className="mt-5 w-full text-start">
               <caption className="sr-only">Forfaits mensuels</caption>
               <thead>
                 <tr className="border-border text-slate border-b text-sm">

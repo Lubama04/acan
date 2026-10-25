@@ -1,5 +1,6 @@
 import { PageHero } from "@/components/content/page-hero";
 import { QuoteForm } from "@/components/forms/quote-form";
+import { issueFormToken } from "@/lib/security/tokens";
 import { getPackages } from "@/lib/content";
 import { SERVICE_OPTIONS } from "@/lib/site";
 import { pageMetadata } from "@/lib/seo";
@@ -31,6 +32,7 @@ export default async function QuotePage({ searchParams }: PageProps<"/devis">) {
           <QuoteForm
             packages={packages.map((p) => ({ slug: p.slug, name: p.name }))}
             defaultService={defaultService}
+            formToken={issueFormToken()}
           />
         </section>
 
